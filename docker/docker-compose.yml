@@ -75,7 +75,7 @@ services:
       - ../dashboard:/usr/share/nginx/html:ro
       - ../outputs/dashboard:/usr/share/nginx/html/data:ro
     ports:
-      - "8080:80"
+      - "8085:80"
     depends_on:
       - copernico-dev
     restart: unless-stopped
