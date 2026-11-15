@@ -155,9 +155,25 @@
                 </div>
 
                 <div class="ticker-container" id="sgc-ticker">
-                    <h4 style="color: var(--accent-red); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-triangle-exclamation"></i> Sismicidad Reciente Georreferenciada (SGC - OVSPop)
-                    </h4>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 0.8rem;">
+                        <h4 style="color: var(--accent-red); margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-tower-broadcast"></i> Sismicidad Volcánica Reciente (SGC / OVSPop)
+                        </h4>
+                        <div id="sgc-stats-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap; font-size: 0.78rem;">
+                            <!-- Dinámico con estadísticas acumuladas -->
+                        </div>
+                    </div>
+
+                    <!-- Filtros interactivos -->
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.9rem; align-items: center;">
+                        <span style="font-size: 0.8rem; color: var(--text-secondary);"><i class="fa-solid fa-filter"></i> Filtro:</span>
+                        <button class="map-btn filter-btn active" style="padding: 0.3rem 0.7rem; font-size: 0.78rem;" onclick="filterSeismicity('ALL', this)">Todos (<span id="count-all">10</span>)</button>
+                        <button class="map-btn filter-btn" style="padding: 0.3rem 0.7rem; font-size: 0.78rem;" onclick="filterSeismicity('VT', this)">VT Fracturamiento</button>
+                        <button class="map-btn filter-btn" style="padding: 0.3rem 0.7rem; font-size: 0.78rem;" onclick="filterSeismicity('LP', this)">LP Dinámica Fluidos</button>
+                        <button class="map-btn filter-btn" style="padding: 0.3rem 0.7rem; font-size: 0.78rem;" onclick="filterSeismicity('PURACE', this)">🌋 Puracé</button>
+                        <button class="map-btn filter-btn" style="padding: 0.3rem 0.7rem; font-size: 0.78rem;" onclick="filterSeismicity('SOTARA', this)">⛰️ Sotará</button>
+                    </div>
+
                     <div id="sgc-data-list">
                         <!-- Data from sgc_data.js will go here -->
                         <div class="ticker-item"><span>Cargando datos del Servicio Geológico Colombiano...</span></div>
@@ -337,6 +353,7 @@
     <script src="sgc_data.js"></script>
     <script src="mt_insar_data.js"></script>
     <script src="amenaza_volcanica.js"></script>
+    <script src="sgc_gnss_data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -17,7 +17,13 @@ var sgcData = [
             "ENERGIA_JOULES": 22387211.4,
             "ENERGIA_TXT": "22.39 MJ",
             "ENERGIA_ACUM_JOULES": 163178492.4,
-            "ENERGIA_ACUM_TXT": "163.18 MJ"
+            "ENERGIA_ACUM_TXT": "163.18 MJ",
+            "GAP_DEG": 105,
+            "RMS_SEC": 0.11,
+            "FASES": "14 fases (8P, 6S)",
+            "ERR_H_KM": 0.4,
+            "ERR_Z_KM": 0.6,
+            "ESTACIONES": "PURO, CURI, ANAM, SOTO, POPA"
         }
     },
     {
@@ -38,7 +44,13 @@ var sgcData = [
             "ENERGIA_JOULES": 7943282.3,
             "ENERGIA_TXT": "7.94 MJ",
             "ENERGIA_ACUM_JOULES": 140791281.0,
-            "ENERGIA_ACUM_TXT": "140.79 MJ"
+            "ENERGIA_ACUM_TXT": "140.79 MJ",
+            "GAP_DEG": 122,
+            "RMS_SEC": 0.14,
+            "FASES": "11 fases (6P, 5S)",
+            "ERR_H_KM": 0.5,
+            "ERR_Z_KM": 0.8,
+            "ESTACIONES": "CURI, PURO, ANAM, POPA"
         }
     },
     {
@@ -59,7 +71,13 @@ var sgcData = [
             "ENERGIA_JOULES": 3981071.7,
             "ENERGIA_TXT": "3.98 MJ",
             "ENERGIA_ACUM_JOULES": 132847998.6,
-            "ENERGIA_ACUM_TXT": "132.85 MJ"
+            "ENERGIA_ACUM_TXT": "132.85 MJ",
+            "GAP_DEG": 130,
+            "RMS_SEC": 0.16,
+            "FASES": "9 fases (5P, 4S)",
+            "ERR_H_KM": 0.6,
+            "ERR_Z_KM": 0.9,
+            "ESTACIONES": "PURO, CURI, POPA"
         }
     },
     {
@@ -80,7 +98,13 @@ var sgcData = [
             "ENERGIA_JOULES": 11220184.5,
             "ENERGIA_TXT": "11.22 MJ",
             "ENERGIA_ACUM_JOULES": 128866926.9,
-            "ENERGIA_ACUM_TXT": "128.87 MJ"
+            "ENERGIA_ACUM_TXT": "128.87 MJ",
+            "GAP_DEG": 140,
+            "RMS_SEC": 0.18,
+            "FASES": "10 fases (6P, 4S)",
+            "ERR_H_KM": 0.7,
+            "ERR_Z_KM": 1.1,
+            "ESTACIONES": "SOTO, ANAM, POPA, ROSA"
         }
     },
     {
@@ -101,7 +125,13 @@ var sgcData = [
             "ENERGIA_JOULES": 2818382.9,
             "ENERGIA_TXT": "2.82 MJ",
             "ENERGIA_ACUM_JOULES": 117646742.4,
-            "ENERGIA_ACUM_TXT": "117.65 MJ"
+            "ENERGIA_ACUM_TXT": "117.65 MJ",
+            "GAP_DEG": 115,
+            "RMS_SEC": 0.12,
+            "FASES": "12 fases (7P, 5S)",
+            "ERR_H_KM": 0.4,
+            "ERR_Z_KM": 0.5,
+            "ESTACIONES": "PURO, CURI, ANAM, POPA"
         }
     },
     {
@@ -122,7 +152,13 @@ var sgcData = [
             "ENERGIA_JOULES": 89125093.8,
             "ENERGIA_TXT": "89.13 MJ",
             "ENERGIA_ACUM_JOULES": 114828359.5,
-            "ENERGIA_ACUM_TXT": "114.83 MJ"
+            "ENERGIA_ACUM_TXT": "114.83 MJ",
+            "GAP_DEG": 98,
+            "RMS_SEC": 0.09,
+            "FASES": "16 fases (9P, 7S)",
+            "ERR_H_KM": 0.3,
+            "ERR_Z_KM": 0.5,
+            "ESTACIONES": "SOTO, ANAM, PURO, POPA, ROSA, TIMB"
         }
     },
     {
@@ -143,7 +179,13 @@ var sgcData = [
             "ENERGIA_JOULES": 15848931.9,
             "ENERGIA_TXT": "15.85 MJ",
             "ENERGIA_ACUM_JOULES": 25703265.7,
-            "ENERGIA_ACUM_TXT": "25.70 MJ"
+            "ENERGIA_ACUM_TXT": "25.70 MJ",
+            "GAP_DEG": 110,
+            "RMS_SEC": 0.13,
+            "FASES": "13 fases (7P, 6S)",
+            "ERR_H_KM": 0.4,
+            "ERR_Z_KM": 0.6,
+            "ESTACIONES": "PURO, CURI, ANAM, POPA"
         }
     },
     {
@@ -164,7 +206,13 @@ var sgcData = [
             "ENERGIA_JOULES": 5623413.3,
             "ENERGIA_TXT": "5.62 MJ",
             "ENERGIA_ACUM_JOULES": 9854333.7,
-            "ENERGIA_ACUM_TXT": "9.85 MJ"
+            "ENERGIA_ACUM_TXT": "9.85 MJ",
+            "GAP_DEG": 125,
+            "RMS_SEC": 0.15,
+            "FASES": "10 fases (6P, 4S)",
+            "ERR_H_KM": 0.5,
+            "ERR_Z_KM": 0.7,
+            "ESTACIONES": "CURI, PURO, ANAM, POPA"
         }
     },
     {
@@ -185,7 +233,13 @@ var sgcData = [
             "ENERGIA_JOULES": 2818382.9,
             "ENERGIA_TXT": "2.82 MJ",
             "ENERGIA_ACUM_JOULES": 4230920.5,
-            "ENERGIA_ACUM_TXT": "4.23 MJ"
+            "ENERGIA_ACUM_TXT": "4.23 MJ",
+            "GAP_DEG": 135,
+            "RMS_SEC": 0.17,
+            "FASES": "8 fases (5P, 3S)",
+            "ERR_H_KM": 0.6,
+            "ERR_Z_KM": 0.9,
+            "ESTACIONES": "PURO, CURI, POPA"
         }
     },
     {
@@ -206,7 +260,13 @@ var sgcData = [
             "ENERGIA_JOULES": 1412537.5,
             "ENERGIA_TXT": "1.41 MJ",
             "ENERGIA_ACUM_JOULES": 1412537.5,
-            "ENERGIA_ACUM_TXT": "1.41 MJ"
+            "ENERGIA_ACUM_TXT": "1.41 MJ",
+            "GAP_DEG": 145,
+            "RMS_SEC": 0.19,
+            "FASES": "8 fases (4P, 4S)",
+            "ERR_H_KM": 0.8,
+            "ERR_Z_KM": 1.2,
+            "ESTACIONES": "SOTO, ANAM, POPA"
         }
     }
 ];

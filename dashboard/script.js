@@ -2,6 +2,8 @@ let sigMap = null;
 let rasterOverlays = [];
 let sgcMarkers = [];
 let sgcGroup = null;
+let gnssGroup = null;
+let currentSeismicFilter = 'ALL';
 
 function showSection(sectionId, element) {
     // Nav items update
@@ -218,7 +220,7 @@ function initSigMap() {
         }
     }
 
-    // Capas Oficiales de Amenaza Volcánica SGC (Polígonos Vectoriales de Zonificación)
+    // Capas Oficiales de Amenaza Volcánica SGC (Paso 1: Polígonos Vectoriales de Zonificación)
     const amenazaPuraceGroup = L.layerGroup().addTo(sigMap);
     const amenazaSotaraGroup = L.layerGroup();
 
@@ -270,6 +272,38 @@ function initSigMap() {
         if (amenazaVolcanicaData.sotara) {
             renderThreatLayer(amenazaVolcanicaData.sotara, amenazaSotaraGroup);
         }
+    }
+
+    // Estaciones Geodésicas Continuas GeoRED SGC (Paso 2: Puntos de Verdad Terreno)
+    gnssGroup = L.layerGroup().addTo(sigMap);
+    if (typeof sgcGnssData !== 'undefined' && sgcGnssData.estaciones) {
+        sgcGnssData.estaciones.forEach(st => {
+            const isPop = st.id === 'POVA';
+            const gnssMarker = L.circleMarker([st.lat, st.lon], {
+                radius: isPop ? 9.5 : 8,
+                fillColor: '#a855f7', // Violeta brillante
+                color: '#ffffff',
+                weight: 2.2,
+                opacity: 1,
+                fillOpacity: 0.95
+            });
+
+            gnssMarker.bindPopup(`
+                <div style="font-family: 'Inter', sans-serif; font-size: 0.84rem; line-height: 1.45; max-width: 280px;">
+                    <strong style="color: #a855f7; font-size: 0.95rem;">🛰️ Estación GNSS Continua [${st.id}]</strong><br>
+                    <strong>Sitio:</strong> ${st.nombre}<br>
+                    <strong>Municipio:</strong> ${st.municipio} (${st.departamento})<br>
+                    <strong>Coordenadas:</strong> ${st.lat.toFixed(5)}°N, ${st.lon.toFixed(5)}°W<br>
+                    ${st.altura_elipsoidal ? `<strong>Altura Elipsoidal:</strong> ${st.altura_elipsoidal} m<br>` : ''}
+                    <div style="margin-top: 6px; padding: 4px 8px; background: rgba(168, 85, 247, 0.12); border-left: 3px solid #a855f7; border-radius: 4px;">
+                        <strong>Rol en InSAR:</strong> <span style="color: #38bdf8; font-weight: 600;">${st.rol_insar}</span><br>
+                        <span style="font-size: 0.75rem; color: #cbd5e1;">Anclaje geodésico milimétrico para validar velocidades LOS y vertical (V<sub>AA</sub>).</span>
+                    </div>
+                    <span style="color: #94a3b8; font-size: 0.73rem;">Red: ${st.red}</span>
+                </div>
+            `);
+            gnssGroup.addLayer(gnssMarker);
+        });
     }
 
     // Grupos Vectoriales PS, SBAS, Referencias e Hitos
@@ -359,7 +393,7 @@ function initSigMap() {
         }
     }
 
-    // Eventos Sísmicos SGC con registro para navegación rápida
+    // Eventos Sísmicos SGC (Paso 3: Parámetros de precisión y filtros)
     if (typeof sgcData !== 'undefined' && sgcData) {
         sgcData.forEach(ev => {
             const attr = ev.attributes;
@@ -378,8 +412,18 @@ function initSigMap() {
                     ? `A <strong>${attr.DIST_PURACE_KM} km</strong> del Cráter Puracé`
                     : `A <strong>${attr.DIST_SOTARA_KM} km</strong> del Complejo Sotará`;
 
+                const precisionHtml = attr.GAP_DEG ? `
+                    <div style="margin-top: 6px; padding: 4px 6px; background: rgba(255,255,255,0.05); border-radius: 4px; font-size: 0.76rem; color: #cbd5e1;">
+                        <strong>Precisión Geofísica:</strong><br>
+                        • Gap Azimutal: <strong>${attr.GAP_DEG}°</strong> | RMS: <strong>${attr.RMS_SEC} s</strong><br>
+                        • Fases: ${attr.FASES}<br>
+                        • Error Focal: H: ±${attr.ERR_H_KM} km | Z: ±${attr.ERR_Z_KM} km<br>
+                        • Estaciones: <span style="color: #38bdf8;">${attr.ESTACIONES}</span>
+                    </div>
+                ` : '';
+
                 sMarker.bindPopup(`
-                    <div style="font-family: 'Inter', sans-serif; font-size: 0.84rem; line-height: 1.45;">
+                    <div style="font-family: 'Inter', sans-serif; font-size: 0.84rem; line-height: 1.45; max-width: 285px;">
                         <strong style="color: ${depthColor}; font-size: 0.95rem;">🌋 ${attr.VOLCAN_ASOCIADO || 'Sismo SGC - OVSPop'}</strong><br>
                         <strong>Lugar:</strong> ${attr.LUGAR}<br>
                         <strong>Magnitud:</strong> ${attr.MAGNITUD.toFixed(1)} ML | <strong>Prof:</strong> ${attr.PROFUNDIDAD} km<br>
@@ -387,7 +431,8 @@ function initSigMap() {
                         <strong>Tipo:</strong> ${attr.TIPO || 'VT (Fracturamiento)'}<br>
                         <strong>Energía Liberada:</strong> ${attr.ENERGIA_TXT || '--'}<br>
                         <strong>Proximidad:</strong> ${distInfo}<br>
-                        <span style="color: #94a3b8; font-size: 0.75rem;">Fecha UTC: ${attr.FECHA_UTC}</span>
+                        ${precisionHtml}
+                        <span style="color: #94a3b8; font-size: 0.73rem;">Fecha UTC: ${attr.FECHA_UTC}</span>
                     </div>
                 `);
                 
@@ -405,6 +450,7 @@ function initSigMap() {
     // Controles de Capas
     overlayMaps["⚠️ Amenaza Puracé (SGC Oficial)"] = amenazaPuraceGroup;
     overlayMaps["⚠️ Amenaza Sotará (SGC Oficial)"] = amenazaSotaraGroup;
+    overlayMaps["🛰️ Estaciones GNSS GeoRED (SGC)"] = gnssGroup;
     overlayMaps["🔵 Dispersores Persistentes (PS: ASI > 0.75)"] = psGroup;
     overlayMaps["🟡 Dispersores Distribuidos (SBAS: 0.60 - 0.75)"] = sbasGroup;
     overlayMaps["★ Puntos de Referencia (APS) e Hitos"] = refGroup;
@@ -413,12 +459,99 @@ function initSigMap() {
     L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(sigMap);
 }
 
-function renderSgcData() {
+function filterSeismicity(filterType, btnElement) {
+    currentSeismicFilter = filterType;
+
+    // Actualizar botones de filtro
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (btnElement) {
+        btnElement.classList.add('active');
+    }
+
+    // Re-renderizar lista
+    renderSgcData(filterType);
+
+    // Filtrar marcadores en el mapa Leaflet
+    if (sgcMarkers && sgcMarkers.length > 0) {
+        sgcMarkers.forEach(item => {
+            const attr = item.attr;
+            let match = false;
+            if (filterType === 'ALL') {
+                match = true;
+            } else if (filterType === 'VT') {
+                match = attr.TIPO && attr.TIPO.includes('VT');
+            } else if (filterType === 'LP') {
+                match = attr.TIPO && attr.TIPO.includes('LP');
+            } else if (filterType === 'PURACE') {
+                match = attr.VOLCAN_ASOCIADO && attr.VOLCAN_ASOCIADO.includes('Puracé');
+            } else if (filterType === 'SOTARA') {
+                match = attr.VOLCAN_ASOCIADO && attr.VOLCAN_ASOCIADO.includes('Sotará');
+            }
+
+            if (match) {
+                if (!sgcGroup.hasLayer(item.layer)) {
+                    sgcGroup.addLayer(item.layer);
+                }
+                item.layer.setStyle({ opacity: 1, fillOpacity: 0.9 });
+            } else {
+                if (sgcGroup.hasLayer(item.layer)) {
+                    sgcGroup.removeLayer(item.layer);
+                }
+            }
+        });
+    }
+}
+
+function renderSgcData(filter = 'ALL') {
     const listContainer = document.getElementById('sgc-data-list');
+    const statsContainer = document.getElementById('sgc-stats-container');
 
     if (typeof sgcData !== 'undefined' && sgcData && sgcData.length > 0) {
+        // Cálculo de Estadísticas Sísmicas
+        const totalCount = sgcData.length;
+        let totalEnergyJoules = 0;
+        let maxMag = 0;
+        let shallowCount = 0;
+
+        sgcData.forEach(ev => {
+            const a = ev.attributes;
+            totalEnergyJoules += (a.ENERGIA_JOULES || 0);
+            if (a.MAGNITUD > maxMag) maxMag = a.MAGNITUD;
+            if (a.PROFUNDIDAD < 3.0) shallowCount++;
+        });
+
+        const totalEnergyTxt = totalEnergyJoules >= 1e6 ? `${(totalEnergyJoules / 1e6).toFixed(1)} MJ` : `${(totalEnergyJoules / 1e3).toFixed(1)} kJ`;
+
+        if (statsContainer) {
+            statsContainer.innerHTML = `
+                <span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-weight: 600;">⚡ Energía: ${totalEnergyTxt}</span>
+                <span style="background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 3px 8px; border-radius: 6px; font-weight: 600;">🔴 Someros (&lt;3km): ${shallowCount}</span>
+                <span style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 3px 8px; border-radius: 6px; font-weight: 600;">📈 Mag Máx: ${maxMag.toFixed(1)} ML</span>
+            `;
+        }
+
+        // Conteo en botón Todos
+        const countAllEl = document.getElementById('count-all');
+        if (countAllEl) countAllEl.textContent = totalCount;
+
+        // Filtrado de eventos
+        const filteredEvents = sgcData.filter(event => {
+            const a = event.attributes;
+            if (filter === 'ALL') return true;
+            if (filter === 'VT') return a.TIPO && a.TIPO.includes('VT');
+            if (filter === 'LP') return a.TIPO && a.TIPO.includes('LP');
+            if (filter === 'PURACE') return a.VOLCAN_ASOCIADO && a.VOLCAN_ASOCIADO.includes('Puracé');
+            if (filter === 'SOTARA') return a.VOLCAN_ASOCIADO && a.VOLCAN_ASOCIADO.includes('Sotará');
+            return true;
+        });
+
         listContainer.innerHTML = '';
-        sgcData.forEach(event => {
+        if (filteredEvents.length === 0) {
+            listContainer.innerHTML = '<div class="ticker-item"><span>No hay eventos sísmicos registrados para este filtro.</span></div>';
+            return;
+        }
+
+        filteredEvents.forEach(event => {
             const attr = event.attributes;
             const item = document.createElement('div');
             item.className = 'ticker-item';
@@ -427,12 +560,15 @@ function renderSgcData() {
             const profInfo = attr.PROFUNDIDAD ? ` | Prof: ${attr.PROFUNDIDAD} km` : '';
             const tipoInfo = attr.TIPO ? ` • ${attr.TIPO}` : '';
             const energiaBadge = attr.ENERGIA_TXT ? `<span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; margin-left: 6px;">⚡ ${attr.ENERGIA_TXT}</span>` : '';
+            
+            const telemetryBadge = attr.GAP_DEG ? `<span style="font-size: 0.72rem; color: #94a3b8; background: rgba(255,255,255,0.04); padding: 1px 5px; border-radius: 3px; margin-left: 6px;">Gap: ${attr.GAP_DEG}° | RMS: ${attr.RMS_SEC}s</span>` : '';
 
             item.innerHTML = `
                 <div>
                     <span style="font-weight: 600; color: ${magColor}">${attr.LUGAR || 'Evento sísmico'}</span>
                     <span style="font-size: 0.8rem; color: var(--text-secondary);">${tipoInfo}</span>
                     ${energiaBadge}
+                    ${telemetryBadge}
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.8rem;">
                     <span style="color: var(--text-secondary); font-size: 0.85rem;"><strong>${attr.MAGNITUD.toFixed(1)} ML</strong>${profInfo} — ${attr.FECHA_UTC}</span>
@@ -449,7 +585,7 @@ function renderSgcData() {
 // Initial Render
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Centro de Geodesia Satelital & Territorio — Samanga Baja Loaded.");
-    renderSgcData();
+    renderSgcData('ALL');
     renderMtInsarTable();
     initSigMap();
 
