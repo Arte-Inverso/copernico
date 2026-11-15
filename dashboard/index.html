@@ -169,33 +169,46 @@
             <section id="graphify" class="theory-section">
                 <header>
                     <h1>Graphify: Arquitectura Viva del Proyecto</h1>
-                    <p>Mapa interactivo de conexiones entre sensores Copernicus, scripts locales en C:\Copernico, literatura científica y territorio.</p>
+                    <p>Mapa integral de conexiones entre sensores Copernicus, entorno Docker, scripts locales, biblioteca científica y territorio.</p>
                 </header>
 
                 <div class="concept-card" style="border-left: 3px solid var(--accent-cyan);">
-                    <h3><i class="fa-solid fa-sitemap"></i> Flujo End-to-End (5 Capas Conectadas — Actualizado Nov 2026)</h3>
+                    <h3><i class="fa-solid fa-sitemap"></i> Arquitectura End-to-End (6 Capas Conectadas — Actualizado Nov 2026)</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 15px;">
                         <div class="card" style="padding: 12px;">
                             <strong style="color: var(--accent-cyan);">1. Sensores &amp; APIs</strong>
-                            <p style="font-size: 0.8rem; margin-top: 6px;">• Sentinel-1A/1C IW SLC (10-Mar, 16-Mar y 06-Nov-2026)<br>• Sentinel-2 L2A 10m (11-Jun, 27-Oct y 08-Nov-2026)<br>• API SGC (ArcGIS REST)</p>
+                            <p style="font-size: 0.8rem; margin-top: 6px;">• Sentinel-1A/1C IW SLC<br>• Sentinel-2 L2A (10m + Red Edge)<br>• ECMWF ERA5 &amp; SGC OVSPop</p>
                         </div>
                         <div class="card" style="padding: 12px;">
                             <strong style="color: var(--accent-gold);">2. Ingesta Python</strong>
-                            <p style="font-size: 0.8rem; margin-top: 6px;">• <code>download_s1_latest.py</code><br>• <code>download_s2_latest.py</code><br>• <code>batch_download_sar.py</code><br>• <code>sgc_live_data.py</code></p>
+                            <p style="font-size: 0.8rem; margin-top: 6px;">• <code>download_s1_latest.py</code><br>• <code>batch_download_sar.py</code><br>• <code>download_s2_latest.py</code><br>• <code>sgc_live_data.py</code></p>
                         </div>
                         <div class="card" style="padding: 12px;">
-                            <strong style="color: #a855f7;">3. Motor SNAP + MT-InSAR</strong>
-                            <p style="font-size: 0.8rem; margin-top: 6px;">• <code>mt_insar_asi_sbas.py</code> (3 Épocas ASI + PS/SBAS + VAA/VEO)<br>• <code>process_s2_updated.py</code><br>• <code>render_ndvi_highres.py</code></p>
+                            <strong style="color: #38bdf8;">3. Docker &amp; Motores</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px;">• Contenedor <code>copernico-dev</code> (Bookworm + GDAL)<br>• Nginx Alpine (Puerto 8085)<br>• SNAP GPT + OpenCV</p>
                         </div>
                         <div class="card" style="padding: 12px;">
-                            <strong style="color: #22c55e;">4. Productos Ráster &amp; GIS</strong>
-                            <p style="font-size: 0.8rem; margin-top: 6px;">• <code>Mapa_NDVI_Samanga_Baja_AltaRes_2026.png</code><br>• <code>purace_rgb_2026.png</code><br>• <code>samanga_asi_ps_sbas.png</code><br>• <code>mt_insar_data.js</code></p>
+                            <strong style="color: #a855f7;">4. Biblioteca Científica</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px;">• Serie Dr. Dinh (PS+DS InSAR, TomoSAR, BIOMASS)<br>• Serie Geoscience (MintPy, ISCE2, GPR, ERA5)</p>
                         </div>
                         <div class="card" style="padding: 12px;">
-                            <strong style="color: var(--accent-red);">5. Territorio &amp; SGC</strong>
-                            <p style="font-size: 0.8rem; margin-top: 6px;">• Caficultura Samanga Baja<br>• Vigilancia Hídrica y Volcánica<br>• Articulación OVSPop (SGC)</p>
+                            <strong style="color: #22c55e;">5. Productos Ráster &amp; GIS</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px;">• <code>Mapa_NDVI_Samanga_Baja_AltaRes_2026.png</code><br>• <code>purace_ifg_v3_final.png</code><br>• <code>samanga_asi_ps_sbas.png</code></p>
+                        </div>
+                        <div class="card" style="padding: 12px;">
+                            <strong style="color: var(--accent-red);">6. Territorio &amp; Impacto</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px;">• Caficultura Samanga Baja<br>• Alianza CTeI (UNIMAYOR + TECNICAFÉ)<br>• Red OVSPop (SGC)</p>
                         </div>
                     </div>
+                </div>
+
+                <div class="concept-card">
+                    <h3><i class="fa-solid fa-server"></i> Novedad de Despliegue: Dockerización Ligera &amp; Estable</h3>
+                    <p style="font-size: 0.9rem;">
+                        • <strong>Entorno Científico Contenerizado:</strong> Servicio <code>copernico-dev</code> con Python 3.10 Bookworm, GDAL y dependencias nativas (<code>rasterio</code>, <code>geopandas</code>, <code>rioxarray</code>, <code>asf-search</code>, <code>cdsapi</code>), reduciendo el consumo a &lt; 1 GB RAM.<br>
+                        • <strong>Dashboard en Vivo (Puerto 8085):</strong> Servicio Nginx independiente con bind mount en caliente hacia <code>dashboard/</code> y <code>outputs/dashboard/</code>.<br>
+                        • <strong>Biblioteca Técnica Integrada:</strong> Disponibilidad local de los 8 manuales técnicos de <code>C:\Copernico\Documentos</code> para soporte metodológico continuo.
+                    </p>
                 </div>
 
                 <div class="concept-card">
