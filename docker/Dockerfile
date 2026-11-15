@@ -39,12 +39,12 @@ ENV CONDA_DIR=/opt/conda
 ENV PATH=$CONDA_DIR/bin:$PATH
 
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
-    /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
+    mkdir -p $CONDA_DIR && \
+    /bin/bash /tmp/miniconda.sh -b -f -p $CONDA_DIR && \
     rm /tmp/miniconda.sh && \
     $CONDA_DIR/bin/conda init bash && \
     $CONDA_DIR/bin/conda tos accept --all || true && \
     printf "channels:\n  - conda-forge\n  - nodefaults\nchannel_priority: strict\n" > /root/.condarc && \
-    cp /root/.condarc $CONDA_DIR/.condarc && \
     $CONDA_DIR/bin/conda clean -afy
 
 # =============================================================================
@@ -52,8 +52,7 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
 # =============================================================================
 COPY environment.yml /tmp/environment.yml
 
-RUN $CONDA_DIR/bin/conda tos accept --all || true && \
-    $CONDA_DIR/bin/conda env create -f /tmp/environment.yml && \
+RUN $CONDA_DIR/bin/conda env create -f /tmp/environment.yml && \
     $CONDA_DIR/bin/conda clean -afy
 
 # Activar entorno por defecto
