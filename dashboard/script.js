@@ -3,6 +3,7 @@ let rasterOverlays = [];
 let sgcMarkers = [];
 let sgcGroup = null;
 let gnssGroup = null;
+let tsChart = null;
 let currentSeismicFilter = 'ALL';
 
 function showSection(sectionId, element) {
@@ -150,6 +151,145 @@ function renderMtInsarTable() {
     });
 }
 
+function initTimeseriesChart() {
+    const canvas = document.getElementById('insar-timeseries-chart');
+    if (!canvas || typeof Chart === 'undefined' || typeof mtInsarTimeseriesData === 'undefined') return;
+
+    const fechas = mtInsarTimeseriesData.fechas;
+    const initialStation = mtInsarTimeseriesData.estaciones['P1_PURACE_CRATER'];
+
+    const ctx = canvas.getContext('2d');
+    tsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: fechas,
+            datasets: [
+                {
+                    label: initialStation.nombre,
+                    data: initialStation.series,
+                    borderColor: initialStation.color,
+                    backgroundColor: initialStation.color + '22',
+                    borderWidth: 2.5,
+                    pointBackgroundColor: initialStation.color,
+                    pointBorderColor: '#fff',
+                    pointRadius: 3.5,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.25
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#f8fafc',
+                        font: { family: 'Inter', size: 12, weight: 600 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` Desplazamiento acumulado: ${context.parsed.y >= 0 ? '+' : ''}${context.parsed.y.toFixed(2)} mm (±1.2 mm)`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(255,255,255,0.06)' },
+                    ticks: {
+                        color: '#94a3b8',
+                        font: { family: 'Inter', size: 10 },
+                        maxRotation: 45
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Desplazamiento d(t) [mm]',
+                        color: '#94a3b8',
+                        font: { family: 'Inter', size: 11, weight: 600 }
+                    },
+                    grid: {
+                        color: function(context) {
+                            if (context.tick.value === 0) return 'rgba(255, 255, 255, 0.4)';
+                            return 'rgba(255,255,255,0.06)';
+                        }
+                    },
+                    ticks: {
+                        color: '#94a3b8',
+                        font: { family: 'Inter', size: 11 },
+                        callback: function(val) {
+                            return (val >= 0 ? '+' : '') + val.toFixed(1) + ' mm';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    updateTimeseriesInfo('P1_PURACE_CRATER');
+}
+
+function loadTimeseriesStation(stationKey, btnElement) {
+    if (!tsChart || typeof mtInsarTimeseriesData === 'undefined') return;
+    const st = mtInsarTimeseriesData.estaciones[stationKey];
+    if (!st) return;
+
+    if (btnElement) {
+        document.querySelectorAll('#ts-station-buttons .map-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+    }
+
+    tsChart.data.datasets[0].label = st.nombre;
+    tsChart.data.datasets[0].data = st.series;
+    tsChart.data.datasets[0].borderColor = st.color;
+    tsChart.data.datasets[0].backgroundColor = st.color + '22';
+    tsChart.data.datasets[0].pointBackgroundColor = st.color;
+    tsChart.update();
+
+    updateTimeseriesInfo(stationKey);
+}
+
+function updateTimeseriesInfo(stationKey) {
+    const panel = document.getElementById('ts-info-panel');
+    if (!panel || typeof mtInsarTimeseriesData === 'undefined') return;
+    const st = mtInsarTimeseriesData.estaciones[stationKey];
+    if (!st) return;
+
+    panel.style.borderLeftColor = st.color;
+    panel.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+            <strong style="font-size: 0.92rem; color: ${st.color};">${st.nombre}</strong>
+            <span class="status-badge" style="background: ${st.color}22; color: ${st.color}; border-color: ${st.color}; font-size: 0.72rem;">${st.alerta}</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-bottom: 6px; font-size: 0.78rem;">
+            <span><strong>Tasa Anual:</strong> <span style="color: ${st.color}; font-weight:600;">${st.v_anual_mm_ano}</span></span>
+            <span><strong>Deformación Acumulada:</strong> <span style="font-weight:600;">${st.desplazamiento_total_mm}</span></span>
+            <span><strong>Tipo Dispersor:</strong> ${st.tipo}</span>
+            <span><strong>Estabilidad ASI:</strong> ${st.asi}</span>
+        </div>
+        <p style="margin: 0; font-size: 0.78rem; color: #cbd5e1;"><strong>Diagnóstico Geomecánico:</strong> ${st.dinamica}.</p>
+    `;
+}
+
+function focusTimeseriesStation(stationKey) {
+    showSection('dashboard');
+    const chartEl = document.getElementById('insar-timeseries-chart');
+    if (chartEl) {
+        chartEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    const matchingBtn = document.querySelector(`#ts-station-buttons .map-btn[onclick*="'${stationKey}'"]`);
+    loadTimeseriesStation(stationKey, matchingBtn);
+}
+
 function initSigMap() {
     const mapContainer = document.getElementById('sig-map');
     if (!mapContainer || typeof L === 'undefined') return;
@@ -220,7 +360,7 @@ function initSigMap() {
         }
     }
 
-    // Capas Oficiales de Amenaza Volcánica SGC (Paso 1: Polígonos Vectoriales de Zonificación)
+    // Capas Oficiales de Amenaza Volcánica SGC (Polígonos Vectoriales de Zonificación)
     const amenazaPuraceGroup = L.layerGroup().addTo(sigMap);
     const amenazaSotaraGroup = L.layerGroup();
 
@@ -274,7 +414,7 @@ function initSigMap() {
         }
     }
 
-    // Estaciones Geodésicas Continuas GeoRED SGC (Paso 2: Puntos de Verdad Terreno)
+    // Estaciones Geodésicas Continuas GeoRED SGC (Puntos de Verdad Terreno)
     gnssGroup = L.layerGroup().addTo(sigMap);
     if (typeof sgcGnssData !== 'undefined' && sgcGnssData.estaciones) {
         sgcGnssData.estaciones.forEach(st => {
@@ -288,6 +428,8 @@ function initSigMap() {
                 fillOpacity: 0.95
             });
 
+            const tsBtn = isPop ? `<button class="map-btn" style="margin-top: 6px; padding: 2px 8px; font-size: 0.75rem; width: 100%;" onclick="focusTimeseriesStation('P5_GNSS_POVA')">📈 Ver Serie Temporal Geodésica</button>` : '';
+
             gnssMarker.bindPopup(`
                 <div style="font-family: 'Inter', sans-serif; font-size: 0.84rem; line-height: 1.45; max-width: 280px;">
                     <strong style="color: #a855f7; font-size: 0.95rem;">🛰️ Estación GNSS Continua [${st.id}]</strong><br>
@@ -299,7 +441,8 @@ function initSigMap() {
                         <strong>Rol en InSAR:</strong> <span style="color: #38bdf8; font-weight: 600;">${st.rol_insar}</span><br>
                         <span style="font-size: 0.75rem; color: #cbd5e1;">Anclaje geodésico milimétrico para validar velocidades LOS y vertical (V<sub>AA</sub>).</span>
                     </div>
-                    <span style="color: #94a3b8; font-size: 0.73rem;">Red: ${st.red}</span>
+                    ${tsBtn}
+                    <span style="color: #94a3b8; font-size: 0.73rem; display: block; margin-top: 4px;">Red: ${st.red}</span>
                 </div>
             `);
             gnssGroup.addLayer(gnssMarker);
@@ -359,12 +502,16 @@ function initSigMap() {
                         weight: 3,
                         fillOpacity: 1
                     });
+
+                    const tsBtn = `<button class="map-btn" style="margin-top: 6px; padding: 2px 8px; font-size: 0.75rem; width: 100%;" onclick="focusTimeseriesStation('P4_SAMANGA_ESTABLE')">📈 Ver Serie Temporal APS</button>`;
+
                     refMarker.bindPopup(`
                         <div style="font-family: 'Inter', sans-serif; font-size: 0.82rem;">
                             <strong style="color: #00d2ff;">★ Punto de Referencia Estable (Anclaje APS)</strong><br>
                             <strong>Zona:</strong> ${st.zone}<br>
                             <strong>Coordenadas:</strong> ${st.ref_point.lat.toFixed(5)}°N, ${st.ref_point.lon.toFixed(5)}°W<br>
-                            <strong>ASI:</strong> ${st.ref_point.asi.toFixed(3)} (Fase de referencia = 0.0 mm)
+                            <strong>ASI:</strong> ${st.ref_point.asi.toFixed(3)} (Fase de referencia = 0.0 mm)<br>
+                            ${tsBtn}
                         </div>
                     `);
                     refGroup.addLayer(refMarker);
@@ -382,10 +529,19 @@ function initSigMap() {
                     weight: 2,
                     fillOpacity: 0.95
                 });
+
+                let tsKey = null;
+                if (lm.name.includes('Puracé')) tsKey = 'P1_PURACE_CRATER';
+                else if (lm.name.includes('Samanga')) tsKey = 'P3_SAMANGA_LADERA';
+                else if (lm.name.includes('Sotará')) tsKey = 'P2_PURACE_CURIQUINGA';
+
+                const tsBtn = tsKey ? `<button class="map-btn" style="margin-top: 6px; padding: 2px 8px; font-size: 0.75rem; width: 100%;" onclick="focusTimeseriesStation('${tsKey}')">📈 Ver Serie Temporal MT-InSAR</button>` : '';
+
                 lmMarker.bindPopup(`
                     <div style="font-family: 'Inter', sans-serif; font-size: 0.85rem;">
                         <strong>📍 ${lm.name}</strong><br>
-                        Lat: ${lm.lat.toFixed(4)}°N | Lon: ${lm.lon.toFixed(4)}°W
+                        Lat: ${lm.lat.toFixed(4)}°N | Lon: ${lm.lon.toFixed(4)}°W<br>
+                        ${tsBtn}
                     </div>
                 `);
                 refGroup.addLayer(lmMarker);
@@ -393,7 +549,7 @@ function initSigMap() {
         }
     }
 
-    // Eventos Sísmicos SGC (Paso 3: Parámetros de precisión y filtros)
+    // Eventos Sísmicos SGC
     if (typeof sgcData !== 'undefined' && sgcData) {
         sgcData.forEach(ev => {
             const attr = ev.attributes;
@@ -588,6 +744,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSgcData('ALL');
     renderMtInsarTable();
     initSigMap();
+    initTimeseriesChart();
 
     // Micro-animation for cards
     const cards = document.querySelectorAll('.card');
