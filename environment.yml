@@ -1,7 +1,6 @@
 name: copernico
 channels:
   - conda-forge
-  - defaults
 dependencies:
   # === Python core ===
   - python=3.10

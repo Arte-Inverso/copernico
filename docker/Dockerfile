@@ -42,6 +42,8 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
     /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
     rm /tmp/miniconda.sh && \
     $CONDA_DIR/bin/conda init bash && \
+    $CONDA_DIR/bin/conda config --add channels conda-forge && \
+    $CONDA_DIR/bin/conda config --remove channels defaults || true && \
     $CONDA_DIR/bin/conda config --set channel_priority strict && \
     $CONDA_DIR/bin/conda clean -afy
 
