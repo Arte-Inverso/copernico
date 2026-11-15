@@ -33,6 +33,9 @@
                     <li class="nav-item" onclick="showSection('toolbox', this)">
                         <i class="fa-solid fa-toolbox"></i> Caja de Herramientas
                     </li>
+                    <li class="nav-item" onclick="showSection('visual-telemetry', this)">
+                        <i class="fa-solid fa-video"></i> Cámaras &amp; Telemetría Visual
+                    </li>
                     <li class="nav-item" onclick="window.open('ficha_tecnica.html', '_blank')" style="border: 1px solid rgba(56, 189, 248, 0.45); background: rgba(56, 189, 248, 0.08);">
                         <i class="fa-solid fa-file-signature" style="color: #38bdf8;"></i> Ficha Técnica (Alianza CTeI)
                     </li>
@@ -344,6 +347,129 @@
                         <p style="font-size: 0.8rem; color: var(--text-secondary);">Consulta el servicio ArcGIS REST de sismicidad reciente del Servicio Geológico Colombiano y actualiza sgc_data.js con coordenadas georreferenciadas.</p>
                     </li>
                 </ul>
+            </section>
+
+            <!-- Visual Telemetry & Webcams Section -->
+            <section id="visual-telemetry" class="theory-section">
+                <header>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h1><i class="fa-solid fa-video" style="color: #38bdf8;"></i> Cámaras &amp; Telemetría Visual en Línea</h1>
+                            <p>Monitoreo visual continuo, cámaras web telemétricas del SGC / OVSPop, termografía infrarroja del cráter y archivo audiovisual de vigilancia volcánica.</p>
+                        </div>
+                        <a href="https://www2.sgc.gov.co/sgc/volcanes/VolcanPurace/Paginas/imagenes-en-linea.aspx" target="_blank" class="map-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: rgba(56, 189, 248, 0.15); border-color: #38bdf8; color: #fff;">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Portal Oficial Webcams SGC
+                        </a>
+                    </div>
+                </header>
+
+                <!-- Grid de Cámaras Web Estratégicas SGC -->
+                <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: var(--accent-blue); display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-tower-observation"></i> Red de Vigilancia Óptica e Infrarroja (SGC / OVSPop)
+                </h3>
+                <div class="data-grid">
+                    <!-- Cámara 1: El Púlpito -->
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <h4 style="margin: 0;"><i class="fa-solid fa-camera"></i> Cámara El Púlpito</h4>
+                            <span class="status-badge" style="background: rgba(34, 197, 94, 0.2); color: #22c55e; border-color: #22c55e;">EN LÍNEA</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">
+                            Ubicada con vista frontal al cono activo del Volcán Puracé. Opera con sensor dual de luz visible e infrarrojo térmico (IR) para detección de incandescencia nocturna.
+                        </p>
+                        <div style="position: relative; overflow: hidden; border-radius: 8px; height: 210px; background: #0b0e14; border: 1px solid var(--glass-border);">
+                            <img src="purace_rgb_2026.png" alt="Cámara El Púlpito - Puracé" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                            <span style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.75); color: #38bdf8; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;">Sensor Dual Visible / IR • OVSPop</span>
+                        </div>
+                        <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary);">Orientación: Noroccidente • Elevación: 4,050 m</span>
+                            <a href="https://www2.sgc.gov.co/sgc/volcanes/VolcanPurace/Paginas/imagenes-en-linea.aspx" target="_blank" class="map-btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; text-decoration: none;">Ver Streaming SGC</a>
+                        </div>
+                    </div>
+
+                    <!-- Cámara 2: Curiquinga -->
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <h4 style="margin: 0;"><i class="fa-solid fa-camera"></i> Cámara Curiquinga</h4>
+                            <span class="status-badge" style="background: rgba(34, 197, 94, 0.2); color: #22c55e; border-color: #22c55e;">EN LÍNEA</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">
+                            Monitoreo directo del campo fumarólico de Curiquinga y la cadena de Los Coconucos. Seguimiento de columnas de vapor, gases sulfurosos y dinámica hidrotermal.
+                        </p>
+                        <div style="position: relative; overflow: hidden; border-radius: 8px; height: 210px; background: #0b0e14; border: 1px solid var(--glass-border);">
+                            <img src="purace_deep_zoom.png" alt="Cámara Curiquinga - Fumarolas" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                            <span style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.75); color: #f59e0b; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;">Sector Fumarólico Curiquinga</span>
+                        </div>
+                        <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary);">Flanco Norte • Registro de Desgasificación</span>
+                            <a href="https://www2.sgc.gov.co/sgc/volcanes/VolcanPurace/Paginas/imagenes-en-linea.aspx" target="_blank" class="map-btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; text-decoration: none;">Ver Streaming SGC</a>
+                        </div>
+                    </div>
+
+                    <!-- Cámara 3: Mina 2 / Flanco Oriental -->
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <h4 style="margin: 0;"><i class="fa-solid fa-camera"></i> Cámara Mina 2</h4>
+                            <span class="status-badge" style="background: rgba(34, 197, 94, 0.2); color: #22c55e; border-color: #22c55e;">EN LÍNEA</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">
+                            Supervisión de las antiguas azufreras de Puracé y flanco oriental. Detecta posibles desprendimientos rocosos y variaciones en la emisión de gases a nivel de ladera.
+                        </p>
+                        <div style="position: relative; overflow: hidden; border-radius: 8px; height: 210px; background: #0b0e14; border: 1px solid var(--glass-border);">
+                            <img src="purace_segmented.png" alt="Cámara Mina 2 - Puracé" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                            <span style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.75); color: #a855f7; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;">Sector Azufrera Mina 2</span>
+                        </div>
+                        <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.75rem; color: var(--text-secondary);">Flanco Oriental • Control de Flujos</span>
+                            <a href="https://www2.sgc.gov.co/sgc/volcanes/VolcanPurace/Paginas/imagenes-en-linea.aspx" target="_blank" class="map-btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; text-decoration: none;">Ver Streaming SGC</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Termografía Infrarroja FLIR y Detección de Cambios -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--accent-orange); display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-fire-flame-curved"></i> Termografía Infrarroja (FLIR) &amp; Detección de Anomalías Térmicas
+                </h3>
+                <div class="data-grid">
+                    <div class="card">
+                        <h4><i class="fa-solid fa-temperature-arrow-up"></i> Mapa Térmico del Cráter (Sobrevuelos FLIR)</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">
+                            La termografía infrarroja permite discriminar áreas de ascenso magmático y aumento de temperatura en las fumarolas (&gt;150°C), distinguiendo el domo central de las paredes frías del cono.
+                        </p>
+                        <img src="purace_heatmap.png" alt="Termografía Cráter Puracé" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
+                            <span>Gradiente Radiométrico: 20°C a 220°C</span>
+                            <span style="color: var(--accent-red); font-weight: 600;">Puntos Calientes Cráter</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4><i class="fa-solid fa-volcano"></i> Vigilancia del Complejo Volcánico Sotará</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">
+                            Monitoreo del edificio dacítico del Sotará y sector Cerro Azafatudo. Seguimiento de micro-sismicidad volcano-tectónica asociada a la falla de Romeral.
+                        </p>
+                        <img src="sotara_deep_zoom.png" alt="Complejo Volcánico Sotará" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
+                            <span>Flanco Sur • Estación SOTO</span>
+                            <span style="color: #38bdf8; font-weight: 600;">Cúpula Volcánica Sotará</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4><i class="fa-brands fa-youtube" style="color: #ef4444;"></i> Video en Línea &amp; Transmisiones SGC</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">
+                            Canal de difusión científica y transmisión en directo del Servicio Geológico Colombiano durante eventos de emisión de ceniza y boletines semanales de actividad.
+                        </p>
+                        <div style="background: rgba(0,0,0,0.4); border-radius: 8px; padding: 1.5rem; text-align: center; border: 1px dashed rgba(255,255,255,0.15);">
+                            <i class="fa-brands fa-youtube" style="font-size: 3rem; color: #ef4444; margin-bottom: 10px;"></i>
+                            <h5 style="margin-bottom: 6px;">Canal Oficial SGC en YouTube</h5>
+                            <p style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 14px;">Acceso a ruedas de prensa, sobrevuelos técnicos y videos explicativos del OVSPop.</p>
+                            <a href="https://www.youtube.com/@ServicioGeologicoColombiano" target="_blank" class="map-btn" style="text-decoration: none; background: #ef4444; color: #fff; border: none; padding: 0.4rem 1rem;">
+                                <i class="fa-solid fa-play"></i> Abrir Canal de Video SGC
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
     </div>
