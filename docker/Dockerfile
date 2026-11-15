@@ -38,7 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV CONDA_DIR=/opt/conda
 ENV PATH=$CONDA_DIR/bin:$PATH
 
-RUN wget --quiet https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -O /tmp/miniforge.sh && \
+RUN curl -fsSL https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o /tmp/miniforge.sh && \
     mkdir -p $CONDA_DIR && \
     /bin/bash /tmp/miniforge.sh -b -f -p $CONDA_DIR && \
     rm /tmp/miniforge.sh && \
