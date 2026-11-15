@@ -28,3 +28,8 @@ env/
 *.log
 .DS_Store
 Thumbs.db
+
+# Variables de entorno y credenciales
+.env
+.env.local
+
