@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libhdf5-dev libnetcdf-dev \
     libgeos-dev libxml2-dev libxslt1-dev \
     libjpeg-dev libpng-dev libtiff-dev \
-    libgl1-mesa-glx libqt5gui5 libqt5core5a libqt5dbus5 \
+    libgl1 libqt5gui5 libqt5core5a libqt5dbus5 \
     fonts-dejavu fonts-noto-cjk \
     default-jre \
     && rm -rf /var/lib/apt/lists/*
