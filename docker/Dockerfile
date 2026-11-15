@@ -42,9 +42,7 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
     /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
     rm /tmp/miniconda.sh && \
     $CONDA_DIR/bin/conda init bash && \
-    $CONDA_DIR/bin/conda config --add channels conda-forge && \
-    $CONDA_DIR/bin/conda config --remove channels defaults || true && \
-    $CONDA_DIR/bin/conda config --set channel_priority strict && \
+    printf "channels:\n  - conda-forge\n  - nodefaults\nchannel_priority: strict\n" > /root/.condarc && \
     $CONDA_DIR/bin/conda clean -afy
 
 # =============================================================================
@@ -52,7 +50,7 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
 # =============================================================================
 COPY environment.yml /tmp/environment.yml
 
-RUN $CONDA_DIR/bin/conda env create -f /tmp/environment.yml && \
+RUN $CONDA_DIR/bin/conda env create -f /tmp/environment.yml --override-channels -c conda-forge && \
     $CONDA_DIR/bin/conda clean -afy
 
 # Activar entorno por defecto
