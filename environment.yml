@@ -1,0 +1,80 @@
+name: copernico
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # === Python core ===
+  - python=3.10
+  - pip
+
+  # === Cómputo científico ===
+  - numpy>=1.24
+  - scipy>=1.10
+  - pandas>=2.0
+  - matplotlib>=3.7
+  - seaborn
+
+  # === Geoespacial ===
+  - gdal>=3.6
+  - rasterio>=1.3
+  - rioxarray>=0.14
+  - xarray>=2023.6
+  - geopandas>=0.13
+  - shapely>=2.0
+  - fiona>=1.9
+  - pyproj>=3.5
+
+  # === Imagen y visión ===
+  - opencv>=4.8
+  - pillow>=10.0
+  - scikit-image>=0.21
+  - tifffile>=2023.7
+
+  # === Machine Learning ===
+  - scikit-learn>=1.3
+  - xgboost
+  # - tensorflow  # descomentar para deep learning
+  # - pytorch     # descomentar para deep learning
+
+  # === InSAR específico ===
+  - isce2
+  - mintpy
+  # - stamps  # StaMPS requiere MATLAB u Octave
+
+  # === Descarga y APIs ===
+  - requests>=2.31
+  - python-dotenv>=1.0
+  - aiohttp
+  - pydap
+
+  # === Atmosférico ===
+  - pyaps3  # para corrección troposférica ERA5
+
+  # === Jupyter ===
+  - jupyterlab>=4.0
+  - notebook>=7.0
+  - ipykernel
+  - ipyleaflet
+  - ipywidgets
+
+  # === Dashboard backend (futuro) ===
+  # - fastapi
+  # - uvicorn
+  # - psycopg2-binary
+
+  # === Herramientas desarrollo ===
+  - black
+  - flake8
+  - mypy
+  - pytest
+  - pytest-cov
+
+  - pip:
+    # Paquetes que no están en conda-forge
+    - asf-search>=6.0      # Cliente oficial NASA ASF
+    - cdsapi               # Copernicus Climate Data Store
+    - eodag                # Sentinel alternativo
+    - snappy               # Python bindings para SNAP
+    - earthengine-api      # Google Earth Engine
+    - nbstripout           # Limpiar outputs de notebooks
+    - pre-commit           # Git hooks

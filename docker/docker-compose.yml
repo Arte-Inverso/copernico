@@ -1,0 +1,117 @@
+# =============================================================================
+# Copernico - docker-compose.yml
+# Orquestación de servicios: desarrollo, notebook y dashboard
+# =============================================================================
+
+version: "3.9"
+
+services:
+  # =============================================================================
+  # SERVICIO 1: Entorno de desarrollo principal (CLI + scripts Python)
+  # =============================================================================
+  copernico-dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: copernico-dev
+    volumes:
+      # Código del proyecto (bind mount para edición live)
+      - ../:/opt/copernico
+      # Datos satelitales persistentes
+      - copernico_data:/data
+      # Outputs generados
+      - copernico_outputs:/outputs
+      # Credenciales (.env no se sube a git)
+      - ../.env:/opt/copernico/.env:ro
+      # Caché conda (acelera reconstrucciones)
+      - conda_cache:/opt/conda/pkgs
+    environment:
+      - PYTHONPATH=/opt/copernico/src
+      - MINTPY_HOME=/opt/conda/envs/copernico/lib/python3.10/site-packages/mintpy
+      - ISCE_HOME=/opt/conda/envs/copernico/lib/python3.10/site-packages/isce
+    working_dir: /opt/copernico
+    stdin_open: true  # docker run -i
+    tty: true         # docker run -t
+    # Por defecto abre bash interactivo en entorno conda
+    command: >
+      bash -c "source /opt/conda/activate copernico && exec bash"
+
+  # =============================================================================
+  # SERVICIO 2: JupyterLab para análisis exploratorio
+  # =============================================================================
+  copernico-notebook:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: copernico-notebook
+    volumes:
+      - ../:/opt/copernico
+      - copernico_data:/data
+      - copernico_outputs:/outputs
+      - ../.env:/opt/copernico/.env:ro
+      - ../notebooks:/opt/copernico/notebooks
+    ports:
+      - "8888:8888"
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=copernico-dev
+    working_dir: /opt/copernico
+    command: >
+      bash -c "source /opt/conda/activate copernico &&
+               jupyter lab
+               --ip=0.0.0.0
+               --port=8888
+               --no-browser
+               --NotebookApp.token=copernico-dev
+               --notebook-dir=/opt/copernico/notebooks"
+
+  # =============================================================================
+  # SERVICIO 3: Dashboard web (Leaflet) para visualización
+  # =============================================================================
+  copernico-dashboard:
+    image: nginx:alpine
+    container_name: copernico-dashboard
+    volumes:
+      - ../dashboard:/usr/share/nginx/html:ro
+      - ../outputs/dashboard:/usr/share/nginx/html/data:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - copernico-dev
+    restart: unless-stopped
+
+  # =============================================================================
+  # SERVICIO 4 (opcional, futuro): Backend Flask/FastAPI
+  # =============================================================================
+  # copernico-api:
+  #   build:
+  #     context: ..
+  #     dockerfile: docker/Dockerfile
+  #   container_name: copernico-api
+  #   volumes:
+  #     - ../:/opt/copernico
+  #     - copernico_data:/data
+  #     - copernico_outputs:/outputs
+  #   ports:
+  #     - "5000:5000"
+  #   command: >
+  #     bash -c "source /opt/conda/activate copernico &&
+  #              uvicorn src.api.main:app --host 0.0.0.0 --port 5000 --reload"
+
+# =============================================================================
+# VOLÚMENES NOMBRADOS (datos persistentes entre reinicios)
+# =============================================================================
+volumes:
+  copernico_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${COPERNICO_DATA_DIR:-./data}
+  copernico_outputs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${COPERNICO_OUTPUTS_DIR:-./outputs}
+  conda_cache:

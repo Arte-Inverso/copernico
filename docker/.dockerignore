@@ -1,0 +1,90 @@
+# =============================================================================
+# Copernico - .dockerignore
+# Archivos que NO se copiarán al construir la imagen Docker
+# =============================================================================
+
+# Datos satelitales crudos (muy grandes, se montan como volúmenes)
+*.SAFE
+*.SAFE.zip
+*.SAFE/
+*.zip
+*.tar
+*.tar.gz
+*.dim
+*.img
+*.hdr
+*.jp2
+*.tif
+*.tiff
+S2_Updated_2026/
+S1*
+S3*
+purace_*.data/
+purace_*.dim
+
+# Entornos Python locales (se recrean en Docker)
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# Credenciales y secretos (NUNCA en imagen)
+.env
+.env.local
+.env.production
+*.key
+*.pem
+secrets.json
+
+# Outputs temporales y logs
+*.log
+*.tmp
+*.bak
+outputs/
+data/
+nohup.out
+
+# Git
+.git
+.gitignore
+.gitattributes
+.github/
+
+# Documentación binaria grande (se subirá como release aparte)
+*.pdf
+*.docx
+*.xlsx
+*.pptx
+
+# Carpeta Minciencias (archivos grandes, se mantienen fuera de Docker)
+Copernico\ Minciencias/
+
+# Scripts Docker que ya están dentro de la imagen
+docker/
+Dockerfile*
+docker-compose*
+
+# READMEs y docs (se copian selectivamente)
+*.md
+
+# Build artifacts
+*.pyc
+*.so
+*.egg-info/
+dist/
+build/
