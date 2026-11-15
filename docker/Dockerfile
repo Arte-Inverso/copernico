@@ -52,11 +52,11 @@ ENV CONDA_DEFAULT_ENV=copernico
 ENV SNAP_HOME=/opt/snap
 ENV PATH=$SNAP_HOME/bin:$PATH
 
-# Snap es grande (~600 MB), lo instalamos en una capa separada para cache
-RUN wget --quiet https://download.esa.int/step/step/snap-9.0/snap_linux-x64_9.0.0.sh -O /tmp/snap_installer.sh && \
+# Snap es grande (~1.1 GB), lo instalamos en una capa separada para cache
+RUN wget --progress=dot:giga https://download.esa.int/step/snap/14.0/installers/esa-snap_sentinel_linux-14.0.0.sh -O /tmp/snap_installer.sh && \
     chmod +x /tmp/snap_installer.sh && \
     /tmp/snap_installer.sh -q -dir $SNAP_HOME && \
-    rm /tmp/snap_installer.sh
+    rm -f /tmp/snap_installer.sh
 
 # Configurar variables SNAP
 ENV GPT_PATH=$SNAP_HOME/bin/gpt
