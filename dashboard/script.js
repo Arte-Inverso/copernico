@@ -1,11 +1,19 @@
 let sigMap = null;
 let rasterOverlays = [];
+let sgcMarkers = [];
+let sgcGroup = null;
 
 function showSection(sectionId, element) {
     // Nav items update
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => item.classList.remove('active'));
-    element.classList.add('active');
+    
+    if (element) {
+        element.classList.add('active');
+    } else {
+        const matchingNav = document.querySelector(`.nav-item[onclick*="'${sectionId}'"]`);
+        if (matchingNav) matchingNav.classList.add('active');
+    }
 
     // Sections update
     const sections = document.querySelectorAll('.theory-section');
@@ -14,7 +22,9 @@ function showSection(sectionId, element) {
     });
 
     const activeSection = document.getElementById(sectionId);
-    activeSection.classList.add('active');
+    if (activeSection) {
+        activeSection.classList.add('active');
+    }
 
     if (sectionId === 'dashboard' && sigMap) {
         setTimeout(() => sigMap.invalidateSize(), 200);
@@ -22,12 +32,69 @@ function showSection(sectionId, element) {
 }
 
 function flyToTarget(lat, lon, zoom, btnElement) {
+    // 1. Asegurar que la pestaña de Mapa SIG & InSAR esté activa
+    showSection('dashboard');
+
+    // 2. Resaltar botón seleccionado si existe
     if (btnElement) {
         document.querySelectorAll('.map-btn').forEach(btn => btn.classList.remove('active'));
         btnElement.classList.add('active');
     }
+
+    // 3. Desplazar suavemente la ventana hacia el contenedor del mapa
+    const mapElement = document.getElementById('sig-map');
+    if (mapElement) {
+        mapElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // 4. Centrar mapa y abrir popup del evento sísmico o dispersor
     if (sigMap) {
-        sigMap.flyTo([lat, lon], zoom, { duration: 1.4 });
+        sigMap.invalidateSize();
+        const targetZoom = zoom || 14;
+        sigMap.flyTo([lat, lon], targetZoom, {
+            duration: 1.2,
+            easeLinearity: 0.25
+        });
+
+        // Asegurar que la capa sísmica esté visible en el mapa
+        if (sgcGroup && !sigMap.hasLayer(sgcGroup)) {
+            sigMap.addLayer(sgcGroup);
+        }
+
+        // 5. Localizar marcador correspondiente y abrir popup con animación de resalte
+        setTimeout(() => {
+            let found = false;
+            if (sgcMarkers && sgcMarkers.length > 0) {
+                for (const item of sgcMarkers) {
+                    const dLat = Math.abs(item.lat - lat);
+                    const dLon = Math.abs(item.lon - lon);
+                    if (dLat < 0.005 && dLon < 0.005) {
+                        item.layer.openPopup();
+                        // Efecto de pulso en el marcador
+                        const origRadius = item.layer.getRadius();
+                        item.layer.setRadius(origRadius + 6);
+                        item.layer.setStyle({ color: '#38bdf8', weight: 4 });
+                        setTimeout(() => {
+                            item.layer.setRadius(origRadius);
+                            item.layer.setStyle({ color: '#ffffff', weight: 1.5 });
+                        }, 1600);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!found) {
+                sigMap.eachLayer(layer => {
+                    if (layer.getLatLng && layer.getPopup) {
+                        const pos = layer.getLatLng();
+                        if (Math.abs(pos.lat - lat) < 0.005 && Math.abs(pos.lng - lon) < 0.005) {
+                            layer.openPopup();
+                        }
+                    }
+                });
+            }
+        }, 1100);
     }
 }
 
@@ -122,7 +189,7 @@ function initSigMap() {
         if (ov.samanga_rgb) {
             const lRgbSam = L.imageOverlay(ov.samanga_rgb.url, ov.samanga_rgb.bounds, { opacity: 0.85 });
             rasterOverlays.push(lRgbSam);
-            overlayMaps["📸 " + ov.samanga_rgb.title] = lRgbSam;
+            overlayMaps["📷 " + ov.samanga_rgb.title] = lRgbSam;
         }
         if (ov.samanga_ndvi) {
             const lNdvi = L.imageOverlay(ov.samanga_ndvi.url, ov.samanga_ndvi.bounds, { opacity: 0.78 }).addTo(sigMap);
@@ -137,12 +204,12 @@ function initSigMap() {
         if (ov.purace_rgb) {
             const lRgbPur = L.imageOverlay(ov.purace_rgb.url, ov.purace_rgb.bounds, { opacity: 0.90 }).addTo(sigMap);
             rasterOverlays.push(lRgbPur);
-            overlayMaps["🏔️ " + ov.purace_rgb.title] = lRgbPur;
+            overlayMaps["🌋 " + ov.purace_rgb.title] = lRgbPur;
         }
         if (ov.purace_ifg) {
             const lPurace = L.imageOverlay(ov.purace_ifg.url, ov.purace_ifg.bounds, { opacity: 0.75 }).addTo(sigMap);
             rasterOverlays.push(lPurace);
-            overlayMaps["🌋 " + ov.purace_ifg.title] = lPurace;
+            overlayMaps["💥 " + ov.purace_ifg.title] = lPurace;
         }
         if (ov.sotara_sar) {
             const lSotara = L.imageOverlay(ov.sotara_sar.url, ov.sotara_sar.bounds, { opacity: 0.78 }).addTo(sigMap);
@@ -155,7 +222,8 @@ function initSigMap() {
     const psGroup = L.layerGroup().addTo(sigMap);
     const sbasGroup = L.layerGroup().addTo(sigMap);
     const refGroup = L.layerGroup().addTo(sigMap);
-    const sgcGroup = L.layerGroup().addTo(sigMap);
+    sgcGroup = L.layerGroup().addTo(sigMap);
+    sgcMarkers = [];
 
     if (typeof mtInsarData !== 'undefined') {
         // Dispersores PS y SBAS
@@ -237,19 +305,19 @@ function initSigMap() {
         }
     }
 
-    // Eventos Sísmicos SGC
+    // Eventos Sísmicos SGC con registro para navegación rápida
     if (typeof sgcData !== 'undefined' && sgcData) {
         sgcData.forEach(ev => {
             const attr = ev.attributes;
             if (attr.LATITUD && attr.LONGITUD) {
-                // Color por profundidad: Somero (<3km: Rojo vibrante), Intermedio (3-8km: Naranja), Profundo (>8km: Azul)
+                // Color por profundidad: Somero (<3km: Rojo), Intermedio (3-8km: Naranja), Profundo (>8km: Azul)
                 const depthColor = attr.PROFUNDIDAD < 3.0 ? '#ef4444' : (attr.PROFUNDIDAD <= 8.0 ? '#f59e0b' : '#3b82f6');
                 const sMarker = L.circleMarker([attr.LATITUD, attr.LONGITUD], {
-                    radius: Math.max(6, attr.MAGNITUD * 4.5),
+                    radius: Math.max(7, attr.MAGNITUD * 5),
                     fillColor: depthColor,
                     color: '#ffffff',
                     weight: 1.5,
-                    fillOpacity: 0.88
+                    fillOpacity: 0.9
                 });
                 
                 const distInfo = attr.VOLCAN_ASOCIADO && attr.VOLCAN_ASOCIADO.includes('Puracé') 
@@ -257,8 +325,8 @@ function initSigMap() {
                     : `A <strong>${attr.DIST_SOTARA_KM} km</strong> del Complejo Sotará`;
 
                 sMarker.bindPopup(`
-                    <div style="font-family: 'Inter', sans-serif; font-size: 0.82rem; line-height: 1.4;">
-                        <strong style="color: ${depthColor}; font-size: 0.9rem;">🌋 ${attr.VOLCAN_ASOCIADO || 'Sismo SGC - OVSPop'}</strong><br>
+                    <div style="font-family: 'Inter', sans-serif; font-size: 0.84rem; line-height: 1.45;">
+                        <strong style="color: ${depthColor}; font-size: 0.95rem;">🌋 ${attr.VOLCAN_ASOCIADO || 'Sismo SGC - OVSPop'}</strong><br>
                         <strong>Lugar:</strong> ${attr.LUGAR}<br>
                         <strong>Magnitud:</strong> ${attr.MAGNITUD.toFixed(1)} ML | <strong>Prof:</strong> ${attr.PROFUNDIDAD} km<br>
                         <strong>Foco:</strong> ${attr.CLASIFICACION_PROF || 'Volcánico'}<br>
@@ -268,14 +336,21 @@ function initSigMap() {
                         <span style="color: #94a3b8; font-size: 0.75rem;">Fecha UTC: ${attr.FECHA_UTC}</span>
                     </div>
                 `);
+                
                 sgcGroup.addLayer(sMarker);
+                sgcMarkers.push({
+                    lat: attr.LATITUD,
+                    lon: attr.LONGITUD,
+                    layer: sMarker,
+                    attr: attr
+                });
             }
         });
     }
 
     overlayMaps["🔵 Dispersores Persistentes (PS: ASI > 0.75)"] = psGroup;
     overlayMaps["🟡 Dispersores Distribuidos (SBAS: 0.60 - 0.75)"] = sbasGroup;
-    overlayMaps["⭐ Puntos de Referencia (APS) e Hitos"] = refGroup;
+    overlayMaps["★ Puntos de Referencia (APS) e Hitos"] = refGroup;
     overlayMaps["🔴 Sismicidad SGC (OVSPop)"] = sgcGroup;
 
     L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(sigMap);
@@ -304,7 +379,7 @@ function renderSgcData() {
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.8rem;">
                     <span style="color: var(--text-secondary); font-size: 0.85rem;"><strong>${attr.MAGNITUD.toFixed(1)} ML</strong>${profInfo} — ${attr.FECHA_UTC}</span>
-                    ${attr.LATITUD ? `<button class="map-btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;" onclick="flyToTarget(${attr.LATITUD}, ${attr.LONGITUD}, 13)">Ver en SIG</button>` : ''}
+                    ${attr.LATITUD ? `<button class="map-btn" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: var(--accent-blue); color: #0b0e14; border: none; border-radius: 6px;" onclick="flyToTarget(${attr.LATITUD}, ${attr.LONGITUD}, 14, this); return false;">📍 Ver en SIG</button>` : ''}
                 </div>
             `;
             listContainer.appendChild(item);
@@ -333,4 +408,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100 * index);
     });
 });
-
