@@ -1,0 +1,51 @@
+<graph id="InSAR_TC">
+  <version>1.0</version>
+  <node id="Read">
+    <operator>Read</operator>
+    <parameters>
+      <file>c:\Copernico\purace_slant_range_discovery.dim</file>
+    </parameters>
+  </node>
+
+  <node id="BandMaths">
+    <operator>BandMaths</operator>
+    <sources><sourceProduct refid="Read"/></sources>
+    <parameters>
+      <targetBands>
+        <targetBand>
+          <name>phase_ifg</name>
+          <expression>atan2(q_ifg_VV_10Mar2026_16Mar2026, i_ifg_VV_10Mar2026_16Mar2026)</expression>
+          <type>float32</type>
+        </targetBand>
+      </targetBands>
+    </parameters>
+  </node>
+
+  <node id="TerrainCorrection">
+    <operator>Terrain-Correction</operator>
+    <sources>
+      <sourceProduct refid="BandMaths"/>
+    </sources>
+    <parameters>
+      <sourceBands>phase_ifg</sourceBands>
+      <demName>SRTM 1Sec HGT</demName>
+      <demResamplingMethod>BILINEAR_INTERPOLATION</demResamplingMethod>
+      <imgResamplingMethod>BILINEAR_INTERPOLATION</imgResamplingMethod>
+      <pixelSpacingInMeter>20.0</pixelSpacingInMeter>
+      <mapProjection>WGS84(DD)</mapProjection>
+      <alignToStandardGrid>false</alignToStandardGrid>
+      <saveSelectedSourceBand>true</saveSelectedSourceBand>
+    </parameters>
+  </node>
+
+  <node id="Write">
+    <operator>Write</operator>
+    <sources>
+      <sourceProduct refid="TerrainCorrection"/>
+    </sources>
+    <parameters>
+      <file>c:\Copernico\purace_insar_tc_final.dim</file>
+      <formatName>BEAM-DIMAP</formatName>
+    </parameters>
+  </node>
+</graph>

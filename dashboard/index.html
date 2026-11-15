@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volcano Sentinel Hub | Alquimia Copernico</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-volcano"></i>
+                ALQUIMIA COPERNICO
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li class="nav-item active" onclick="showSection('dashboard', this)">
+                        <i class="fa-solid fa-map-location-dot"></i> Mapa SIG &amp; InSAR
+                    </li>
+                    <li class="nav-item" onclick="showSection('graphify', this)">
+                        <i class="fa-solid fa-diagram-project"></i> Grafo del Proyecto
+                    </li>
+                    <li class="nav-item" onclick="showSection('learning', this)">
+                        <i class="fa-solid fa-book-open-reader"></i> Base Científica (InSAR)
+                    </li>
+                    <li class="nav-item" onclick="showSection('satellite', this)">
+                        <i class="fa-solid fa-satellite-dish"></i> Archivo Satelital
+                    </li>
+                    <li class="nav-item" onclick="showSection('toolbox', this)">
+                        <i class="fa-solid fa-toolbox"></i> Caja de Herramientas
+                    </li>
+                    <li class="nav-item" onclick="window.open('ficha_tecnica.html', '_blank')" style="border: 1px solid rgba(56, 189, 248, 0.45); background: rgba(56, 189, 248, 0.08);">
+                        <i class="fa-solid fa-file-signature" style="color: #38bdf8;"></i> Ficha Técnica (Alianza CTeI)
+                    </li>
+                </ul>
+            </nav>
+            <div class="footer-info">
+                <span class="status-badge">Samanga Baja • Puracé • Sotará</span>
+                <p style="font-size: 0.7rem; margin-top: 10px; color: var(--text-secondary);">Jenner Zúñiga | Investigación &amp; Café</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard & Interactive GIS Section -->
+            <section id="dashboard" class="theory-section active">
+                <header style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h1>Visor SIG &amp; Monitoreo Multi-Temporal (MT-InSAR)</h1>
+                        <p>Integración georreferenciada de dispersores <strong>PS / SBAS (Sentinel-1 SLC)</strong>, vigor cafetero <strong>NDVI (Sentinel-2)</strong> y sismicidad <strong>SGC (OVSPop)</strong>.</p>
+                    </div>
+                    <a href="ficha_tecnica.html" target="_blank" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
+                        <i class="fa-solid fa-file-pdf"></i> Ficha Técnica SGR (UNIMAYOR + TECNICAFÉ)
+                    </a>
+                </header>
+
+                <!-- Map Controls Bar -->
+                <div class="map-toolbar">
+                    <div class="map-btn-group">
+                        <button class="map-btn active" onclick="flyToTarget(2.40095, -76.56997, 14, this)">
+                            <i class="fa-solid fa-seedling"></i> Samanga Baja (NDVI + ASI)
+                        </button>
+                        <button class="map-btn" onclick="flyToTarget(2.305, -76.398, 13, this)">
+                            <i class="fa-solid fa-volcano"></i> Volcán Puracé (D-InSAR)
+                        </button>
+                        <button class="map-btn" onclick="flyToTarget(2.107, -76.590, 13, this)">
+                            <i class="fa-solid fa-mountain"></i> Volcán Sotará (SAR)
+                        </button>
+                        <button class="map-btn" onclick="flyToTarget(2.4542, -76.6094, 14, this)">
+                            <i class="fa-solid fa-building-columns"></i> Sede OVSPop (SGC Popayán)
+                        </button>
+                        <button class="map-btn" onclick="flyToTarget(2.26, -76.50, 11, this)">
+                            <i class="fa-solid fa-globe"></i> Vista General Cauca
+                        </button>
+                    </div>
+                    <div class="opacity-control">
+                        <label for="overlay-opacity"><i class="fa-solid fa-Sliders"></i> Opacidad Ráster:</label>
+                        <input type="range" id="overlay-opacity" min="0" max="1" step="0.05" value="0.78" oninput="updateOverlayOpacity(this.value)">
+                    </div>
+                </div>
+
+                <!-- Interactive Leaflet Map -->
+                <div id="sig-map" class="sig-map-container"></div>
+
+                <!-- Map Legend -->
+                <div class="map-legend-bar">
+                    <span><i class="fa-solid fa-circle" style="color: #00f3ff;"></i> <strong>PS (ASI &gt; 0.75):</strong> Techos/Vías/Roca estable</span>
+                    <span><i class="fa-solid fa-circle" style="color: #ffcc33;"></i> <strong>SBAS (0.60–0.75):</strong> Cafetales y laderas con vegetación</span>
+                    <span><i class="fa-solid fa-star" style="color: #ffffff;"></i> <strong>Punto Ref. Estable:</strong> Anclaje de fase cero (APS)</span>
+                    <span><i class="fa-solid fa-bullseye" style="color: #ff4b2b;"></i> <strong>Sismo SGC:</strong> Eventos recientes OVSPop</span>
+                </div>
+
+                <!-- Quantitative Table (Ávila Vélez et al., 2026 + Tamayo Duque et al., 2023) -->
+                <div class="concept-card" style="margin-top: 1.5rem; padding: 1.5rem;">
+                    <h3 style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <span><i class="fa-solid fa-table"></i> Tabla Cuantitativa Multi-Temporal (3 Épocas: Marzo – Noviembre 2026): SBAS vs. PS</span>
+                        <span style="font-size: 0.75rem; color: var(--accent-gold); font-weight: normal;">Metodología: Tamayo Duque et al. (2023) [ASI] &amp; Ávila Vélez et al. (2026) [VAA / VEO]</span>
+                    </h3>
+                    <div style="overflow-x: auto;">
+                        <table class="insar-table" id="mt-insar-table">
+                            <thead>
+                                <tr>
+                                    <th>Zona / Sector Territorial</th>
+                                    <th>Método (Umbral ASI)</th>
+                                    <th>Ángulo θ</th>
+                                    <th>CD (Dispersores)</th>
+                                    <th>PV LOS (mm)</th>
+                                    <th>DV LOS (mm)</th>
+                                    <th>VAA Vertical (mm)</th>
+                                    <th>VEO Este-Oeste (mm)</th>
+                                    <th>Punto Ref. Estable (APS=0)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mt-insar-tbody">
+                                <!-- Dinámico desde mt_insar_data.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <p style="font-size: 0.78rem; margin-top: 10px; color: var(--text-secondary);">
+                        <strong>Nota técnica:</strong> <code>CD</code>: Cantidad de píxeles coherentes detectados; <code>PV LOS</code>: Desplazamiento diferencial medio en línea de visión (mm); <code>DV LOS</code>: Desviación estándar (mm); <code>VAA = V_LOS / cos(θ)</code>: Componente vertical arriba-abajo (mm); <code>VEO = V_LOS / sin(θ)</code>: Componente horizontal este-oeste (mm). Serie Multi-Temporal procesada: <code>S1A (10-Mar-2026)</code> + <code>S1C (16-Mar-2026)</code> + <code>S1C (06-Nov-2026)</code> Track 142 Descendente y <code>Sentinel-2 L2A (08-Nov-2026)</code>.
+                    </p>
+                </div>
+
+                <!-- Destacado: Mapa NDVI Alta Resolución y Color Real 10m Puracé -->
+                <div class="data-grid" style="margin-top: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));">
+                    <div class="card">
+                        <div class="card-title">SAMANGA BAJA — MAPA NDVI ALTA RESOLUCIÓN (10 m) <span>Sentinel-2 L2A (Nov 2026)</span></div>
+                        <div class="card-value" style="font-size: 1.4rem;">Media NDVI: 0.817 | 78,231 PS | 37,802 SBAS</div>
+                        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 10px;">
+                            Verde oscuro (0.80–0.95): Cafetales con sombrío y bosques de galería. Rojo/Naranja (0.25–0.45): Vías veredales, techos y beneficiaderos (coincidentes con nodos PS). Haz clic en la imagen para ampliar.
+                        </p>
+                        <div style="background: rgba(0,0,0,0.35); border-radius: 12px; padding: 8px; text-align: center;">
+                            <img src="../Mapa_NDVI_Samanga_Baja_AltaRes_2026.png" alt="Mapa NDVI Samanga Baja Alta Resolución" style="width: 100%; max-height: 360px; object-fit: contain; border-radius: 8px; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">VOLCÁN PURACÉ — COLOR REAL 10 m &amp; FASE D-InSAR <span>S2 L2A + S1C IW1 VV (Nov 2026)</span></div>
+                        <div class="card-value" style="font-size: 1.4rem;">52,298 PS | 20,258 SBAS | V<sub>AA</sub>: -0.12 mm</div>
+                        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 10px;">
+                            Vista óptica libre de nubes a 10 m del cráter principal del Puracé, laguna ácida y cadena Los Coconucos, junto con el interferograma filtrado por pantalla atmosférica (APS). Haz clic para ampliar.
+                        </p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(0,0,0,0.35); border-radius: 12px; padding: 8px; align-items: center;">
+                            <img src="../purace_rgb_2026.png" alt="Cráter Volcán Puracé 10m" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                            <img src="../purace_ifg_real_overlay.png" alt="Interferograma Puracé" style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        </div>
+                        <div style="margin-top: 10px; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 8px; text-align: center;">
+                            <img src="../ndvi_samanga_analysis.png" alt="Comparativa Color Real vs NDVI Samanga Baja" style="width: 100%; max-height: 130px; object-fit: contain; border-radius: 6px; cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ticker-container" id="sgc-ticker">
+                    <h4 style="color: var(--accent-red); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Sismicidad Reciente Georreferenciada (SGC - OVSPop)
+                    </h4>
+                    <div id="sgc-data-list">
+                        <!-- Data from sgc_data.js will go here -->
+                        <div class="ticker-item"><span>Cargando datos del Servicio Geológico Colombiano...</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Graphify Section -->
+            <section id="graphify" class="theory-section">
+                <header>
+                    <h1>Graphify: Arquitectura Viva del Proyecto</h1>
+                    <p>Mapa interactivo de conexiones entre sensores Copernicus, scripts locales en C:\Copernico, literatura científica y territorio.</p>
+                </header>
+
+                <div class="concept-card" style="border-left: 3px solid var(--accent-cyan);">
+                    <h3><i class="fa-solid fa-sitemap"></i> Flujo End-to-End (5 Capas Conectadas — Actualizado Nov 2026)</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 15px;">
+                        <div class="card" style="padding: 12px;">
+                            <strong style="color: var(--accent-cyan);">1. Sensores &amp; APIs</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px;">• Sentinel-1A/1C IW SLC (10-Mar, 16-Mar y 06-Nov-2026)<br>• Sentinel-2 L2A 10m (11-Jun, 27-Oct y 08-Nov-2026)<br>• API SGC (ArcGIS REST)</p>
+                        </div>
+                        <div class="card" style="padding: 12px;">
+                            <strong style="color: var(--accent-gold);">2. Ingesta Python</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px;">• <code>download_s1_latest.py</code><br>• <code>download_s2_latest.py</code><br>• <code>batch_download_sar.py</code><br>• <code>sgc_live_data.py</code></p>
+                        </div>
+                        <div class="card" style="padding: 12px;">
+                            <strong style="color: #a855f7;">3. Motor SNAP + MT-InSAR</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px;">• <code>mt_insar_asi_sbas.py</code> (3 Épocas ASI + PS/SBAS + VAA/VEO)<br>• <code>process_s2_updated.py</code><br>• <code>render_ndvi_highres.py</code></p>
+                        </div>
+                        <div class="card" style="padding: 12px;">
+                            <strong style="color: #22c55e;">4. Productos Ráster &amp; GIS</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px;">• <code>Mapa_NDVI_Samanga_Baja_AltaRes_2026.png</code><br>• <code>purace_rgb_2026.png</code><br>• <code>samanga_asi_ps_sbas.png</code><br>• <code>mt_insar_data.js</code></p>
+                        </div>
+                        <div class="card" style="padding: 12px;">
+                            <strong style="color: var(--accent-red);">5. Territorio &amp; SGC</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px;">• Caficultura Samanga Baja<br>• Vigilancia Hídrica y Volcánica<br>• Articulación OVSPop (SGC)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <h3><i class="fa-solid fa-bug-slash"></i> Hallazgos Técnicos Clave Documentados en tus Escenas</h3>
+                    <p style="font-size: 0.9rem;">
+                        1. <strong>Serie Temporal de 3 Épocas Sentinel-1 (Marzo – Noviembre 2026):</strong> Integración de <code>S1A (10-Mar-2026)</code>, <code>S1C (16-Mar-2026)</code> y la nueva escena <code>S1C (06-Nov-2026)</code> en Track 142 Descendente, permitiendo evaluar la estabilidad multimes (<code>ASI</code>) tanto en <strong>Samanga Baja (IW2 VV)</strong> como en el <strong>Volcán Puracé (IW1 VV)</strong>.<br>
+                        2. <strong>Mosaico Óptico Sentinel-2 L2A de 10 m (Actualizado al 08-Nov-2026):</strong> Combinación de las bandas <code>B02, B03, B04, B08</code> y máscara de nubes <code>SCL</code> para cartografiar el vigor cafetero de Samanga Baja (NDVI medio <code>0.817</code>) y el cráter del Volcán Puracé a 10 m de resolución.<br>
+                        3. <strong>Corrección de Byte Order ENVI:</strong> Lectura nativa en formato <em>Big-Endian</em> (<code>&gt;f4</code>) de las matrices de ESA SNAP sin pérdida de precisión flotante.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Learning Portal Section -->
+            <section id="learning" class="theory-section">
+                <header>
+                    <h1>Base Científica e Investigación Aplicada</h1>
+                    <p>Fundamentos teóricos y estudios de referencia en Colombia aplicados a Samanga Baja, Puracé y Sotará.</p>
+                </header>
+
+                <div class="concept-card">
+                    <h3><i class="fa-solid fa-mountain-sun"></i> Paper 1: PS-InSAR vs. SBAS en Veredas Andinas (Ávila Vélez et al., 2026)</h3>
+                    <p>Estudio en veredas rurales de Arbeláez (Cundinamarca) con 27 escenas Sentinel-1 SLC y SRTM de 30 m. Demuestra que <strong>PS (Dispersores Persistentes)</strong> es ideal para infraestructura fija (techos de fincas, beneficiaderos, vías y roca volcánica), mientras que <strong>SBAS (Small Baseline Subset)</strong> logra un <strong>17% más de cobertura en zonas rurales con vegetación y cultivos</strong>. Descompone la velocidad LOS mediante <code>V_vertical = V_LOS / cos(θ)</code> y <code>V_este_oeste = V_LOS / sin(θ)</code>.</p>
+                    <p style="margin-top: 10px; font-size: 0.85rem; border-left: 2px solid var(--accent-cyan); padding-left: 10px;">
+                        <strong>Archivo Local:</strong> <code>C:\Copernico\articulo_umng_7889.pdf</code>
+                    </p>
+                </div>
+
+                <div class="concept-card">
+                    <h3><i class="fa-solid fa-satellite"></i> Paper 2: MT-InSAR Dual + Red GNSS del SGC (Tamayo Duque et al., 2023)</h3>
+                    <p>Combina <strong>107 escenas Ascendentes + 153 Descendentes</strong> de Sentinel-1 IW SLC (VV). Filtra el ruido de vapor de agua atmosférico (<strong>APS - Atmospheric Phase Screen</strong>) seleccionando nodos mediante el <strong>Índice de Estabilidad de Amplitud</strong>: <code>ASI = 1 - (σ_A / m_A) &gt; 0.75</code> y anclando un punto de referencia en roca dura estable. Valida las velocidades milimétricas directamente contra estaciones <strong>GNSS continuas del SGC / SIRGAS</strong> y niveles de aguas subterráneas.</p>
+                    <p style="margin-top: 10px; font-size: 0.85rem; border-left: 2px solid var(--accent-gold); padding-left: 10px;">
+                        <strong>Archivo Local:</strong> <code>C:\Geomatica\remotesensing-15-05249.pdf</code>
+                    </p>
+                </div>
+
+                <div class="concept-card">
+                    <h3><i class="fa-solid fa-seedling"></i> Monitoreo Agroambiental en Samanga Baja (Sentinel-2 + Sentinel-1)</h3>
+                    <p>Articulación de índices espectrales ópticos de 10 m (NDVI para vigor de cafetales, sombrío y microcuencas) con estabilidad de amplitud radar (ASI) sobre las fincas de Samanga Baja y vigilancia interferométrica sobre la Cadena Volcánica de Los Coconucos (Puracé) y el Complejo Volcánico Sotará.</p>
+                </div>
+            </section>
+
+            <!-- Satellite Archive -->
+            <section id="satellite" class="theory-section">
+                <header>
+                    <h1>Archivo Satelital Procesado (Actualizado Nov 2026)</h1>
+                    <p>Haz clic sobre cualquier imagen para abrirla en tamaño completo.</p>
+                </header>
+
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="../Mapa_NDVI_Samanga_Baja_AltaRes_2026.png" style="cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        <div class="gallery-info">
+                            <h4>Samanga Baja — Mapa NDVI Alta Resolución (10 m)</h4>
+                            <p>Vigor cafetero y cuencas (Media: 0.817 | 220 DPI)</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="../ndvi_samanga_analysis.png" style="cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        <div class="gallery-info">
+                            <h4>Samanga Baja — Color Real 10m vs. NDVI</h4>
+                            <p>Mosaico Sentinel-2 L2A (Actualizado 08-Nov-2026)</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="../purace_rgb_2026.png" style="cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        <div class="gallery-info">
+                            <h4>Volcán Puracé y Los Coconucos — Color Real 10 m</h4>
+                            <p>Cráter principal, laguna ácida y centros eruptivos (S2 L2A)</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="../purace_ifg_real_overlay.png" onerror="this.src='../purace_ifg.png'" style="cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        <div class="gallery-info">
+                            <h4>Puracé — Fase D-InSAR (APS Filtrado Mar–Nov 2026)</h4>
+                            <p>Sentinel-1A/1C IW1 VV (SRTM 1Sec 20m)</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="../samanga_asi_ps_sbas.png" style="cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        <div class="gallery-info">
+                            <h4>Samanga Baja — Estabilidad Radar 3-Épocas (ASI)</h4>
+                            <p>Nodos PS (&gt;0.75) y SBAS (0.60–0.75) en IW2 VV</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="../sotara_sar_overlay.png" style="cursor: pointer;" onclick="window.open(this.src, '_blank')">
+                        <div class="gallery-info">
+                            <h4>Sotará — Retrodispersión SAR IW1 VV</h4>
+                            <p>Monitoreo del Complejo Volcánico Sotará</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Toolbox Section -->
+            <section id="toolbox" class="theory-section">
+                <header>
+                    <h1>Caja de Herramientas (C:\Copernico)</h1>
+                    <p>Inventario documentado de tus scripts de Python y procesadores satelitales.</p>
+                </header>
+                
+                <ul style="list-style: none;">
+                    <li class="card" style="margin-bottom: 15px;">
+                        <h4><i class="fa-brands fa-python"></i> mt_insar_asi_sbas.py <span class="status-badge" style="font-size: 0.65rem; margin-left: 8px;">3 ÉPOCAS (MAR–NOV 2026)</span></h4>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">Motor Multi-Temporal: procesa las escenas Sentinel-1 SLC (10-Mar, 16-Mar y 06-Nov-2026), calcula el Índice de Estabilidad de Amplitud (ASI), clasifica dispersores PS (&gt;0.75) y SBAS (0.60–0.75), filtra pantalla atmosférica (APS), proyecta componentes Vertical (VAA) y Este-Oeste (VEO) y exporta capas para Leaflet.</p>
+                    </li>
+                    <li class="card" style="margin-bottom: 15px;">
+                        <h4><i class="fa-brands fa-python"></i> process_s2_updated.py + render_ndvi_highres.py <span class="status-badge" style="font-size: 0.65rem; margin-left: 8px;">NUEVO (10m)</span></h4>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">Procesador multiespectral Sentinel-2 L2A (B02, B03, B04, B08 a 10 m + máscara de nubes SCL a 20 m): genera los mosaicos en Color Real de Samanga Baja y Volcán Puracé y el Mapa NDVI de alta resolución (220 DPI).</p>
+                    </li>
+                    <li class="card" style="margin-bottom: 15px;">
+                        <h4><i class="fa-brands fa-python"></i> download_s1_latest.py + download_s2_latest.py</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">Clientes selectivos de alta velocidad conectados a la API OData <code>Nodes</code> de Copernicus Data Space Ecosystem para descargar sub-franjas específicas (IW1/IW2 VV) y bandas ópticas de 10 m.</p>
+                    </li>
+                    <li class="card" style="margin-bottom: 15px;">
+                        <h4><i class="fa-brands fa-python"></i> sgc_live_data.py</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">Consulta el servicio ArcGIS REST de sismicidad reciente del Servicio Geológico Colombiano y actualiza sgc_data.js con coordenadas georreferenciadas.</p>
+                    </li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <!-- Data & Map Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../sgc_data.js"></script>
+    <script src="../mt_insar_data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

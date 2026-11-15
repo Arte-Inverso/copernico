@@ -1,0 +1,16 @@
+[
+    {
+        "attributes": {
+            "FECHA_UTC": "2026-03-21 19:15:00",
+            "MAGNITUD": 1.2,
+            "LUGAR": "V. Puracé (SIMULADO)"
+        }
+    },
+    {
+        "attributes": {
+            "FECHA_UTC": "2026-03-21 14:02:10",
+            "MAGNITUD": 0.8,
+            "LUGAR": "V. Sotará (SIMULADO)"
+        }
+    }
+]

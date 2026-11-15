@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAT-I Samanga | Centro de Mando</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e14;
+            --card-bg: rgba(20, 26, 35, 0.8);
+            --accent: #00d2ff;
+            --danger: #ff4b2b;
+            --warning: #fbc02d;
+            --success: #00c853;
+            --text: #e0e6ed;
+            --text-dim: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        aside {
+            width: 260px;
+            background: rgba(15, 23, 42, 0.95);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .nav-item.active {
+            background: rgba(0, 210, 255, 0.15);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .nav-item:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(0, 210, 255, 0.05), transparent);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .status-badge {
+            background: rgba(0, 200, 83, 0.1);
+            color: var(--success);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(0, 200, 83, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--success);
+            animation: pulse-kf 2s infinite;
+        }
+
+        @keyframes pulse-kf {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Map Section */
+        .map-container {
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .map-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.8) contrast(1.2);
+            transition: transform 0.3s;
+            cursor: zoom-in;
+        }
+
+        .map-container:hover .map-img {
+            transform: scale(2.5); /* Lupa digital sencilla */
+            transform-origin: center;
+        }
+
+        .zoom-overlay {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            color: #fff;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .map-container:hover .zoom-overlay {
+            opacity: 1;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--accent);
+            font-family: monospace;
+        }
+
+        /* Telemetry */
+        .stat-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+
+        .stat-unit {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-left: 4px;
+        }
+
+        /* Alerts List */
+        .alert-list {
+            list-style: none;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .alert-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .alert-info h4 {
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+        }
+
+        .alert-info p {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+        }
+
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            SAMANGA <span>SAT-I</span>
+        </div>
+        <div class="nav-item active">Panel Principal</div>
+        <div class="nav-item">Mapas de Riesgo</div>
+        <div class="nav-item">Sentinel-1 InSAR</div>
+        <div class="nav-item">Sentinel-2 Óptico</div>
+        <div class="nav-item">Sensores IoT</div>
+        <div class="nav-item">Configuración</div>
+
+        <div style="margin-top: auto; font-size: 0.7rem; color: var(--text-dim); text-align: center;">
+            <p>CONVOCATORIA</p>
+            <p style="color: white; font-weight: 600;">COLOMBIA INTELIGENTE 2026</p>
+        </div>
+    </aside>
+
+    <main>
+        <header class="fade-in">
+            <div>
+                <h1 style="font-size: 1.5rem;">Resumen de Operaciones</h1>
+                <p style="color: var(--text-dim); font-size: 0.9rem;">Samanga Baja, Popayán, Cauca</p>
+            </div>
+            <div class="status-badge">
+                <div class="pulse"></div>
+                SISTEMA OPERATIVO
+            </div>
+        </header>
+
+        <div class="dashboard-grid fade-in">
+            <!-- Visualización Principal -->
+            <div class="card">
+                <div class="card-title">
+                    Vigilancia Específica: Puracé y Sotará
+                    <span style="color: var(--accent);">VIGILANCIA BI-VOLCÁNICA ACTIVADA</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="map-container" style="height: 300px; border: 2px solid #ff4b2b;">
+                        <img src="purace_heatmap.png" class="map-img" alt="Puracé">
+                        <div class="map-overlay" style="background: #ff4b2b; color: white;">VOLCÁN PURACÉ (MAGMA)</div>
+                    </div>
+                    <div class="map-container" style="height: 300px; border: 2px solid #00c853;">
+                        <img src="sotara_heatmap.png" class="map-img" alt="Sotará">
+                        <div class="map-overlay" style="background: #00c853; color: white;">VOLCÁN SOTARÁ (VIRIDIS)</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="map-container" style="height: 250px;">
+                        <img src="purace_change_detection.png" class="map-img" alt="Cambio">
+                        <div class="map-overlay">DETECCIÓN DE CAMBIOS (10 vs 16 Mar)</div>
+                    </div>
+                    <div class="map-container" style="height: 250px;">
+                        <img src="purace_segmented.png" class="map-img" alt="Segmentación">
+                        <div class="map-overlay">SEGMENTACIÓN IA (K-MEANS)</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center;">
+                    <button class="btn" onclick="toggleZoom()">ACTIVAR DEEP ZOOM (2m)</button>
+                    <button class="btn" style="background: transparent; color: var(--accent); border: 1px solid var(--accent);">DESCARGAR REPORTE</button>
+                    <div style="font-size: 0.75rem; color: var(--text-dim); border-left: 2px solid var(--accent); padding-left: 10px;">
+                        <span style="color: var(--accent); font-weight: 600;">GUÍA RÁPIDA:</span> 
+                        Pasa el ratón sobre el mapa para activar la lupa digital. 
+                        Usa DEEP ZOOM para ver el cráter a máxima resolución.
+                    </div>
+                </div>
+
+                <script>
+                    let zoomActive = false;
+                    function toggleZoom() {
+                        zoomActive = !zoomActive;
+                        const btn = event.target;
+                        const imgPurace = document.querySelector('img[alt="Puracé"]');
+                        const imgSotara = document.querySelector('img[alt="Sotará"]');
+                        
+                        if (zoomActive) {
+                            imgPurace.src = 'purace_deep_zoom.png';
+                            imgSotara.src = 'sotara_deep_zoom.png';
+                            btn.innerText = 'VOLVER A VISTA GENERAL';
+                            btn.style.background = 'var(--warning)';
+                        } else {
+                            imgPurace.src = 'purace_heatmap.png';
+                            imgSotara.src = 'sotara_heatmap.png';
+                            btn.innerText = 'ACTIVAR DEEP ZOOM (2m)';
+                            btn.style.background = 'var(--accent)';
+                        }
+                    }
+                </script>
+            </div>
+
+            <!-- Guía de Interpretación SAR vs Óptico -->
+            <div class="card" style="grid-column: span 3; margin-top: 1rem; background: linear-gradient(90deg, rgba(0,210,255,0.05), transparent);">
+                <div class="card-title">🔬 Inteligencia de Datos: SAR vs Óptico</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <h4 style="color: var(--accent); font-size: 0.9rem; margin-bottom: 0.5rem;">Satélite Sentinel-1 (Radar SAR)</h4>
+                        <p style="font-size: 0.8rem; line-height: 1.4; color: var(--text-dim);">
+                            Usa microondas para "sentir" la textura del terreno. 
+                            <strong>Diferencia:</strong> Atraviesa nubes y humo volcánico. Lo que ves son rugosidades y pendientes. 
+                            Ideal para detectar deformaciones milimétricas en el cono volcánico.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--warning); font-size: 0.9rem; margin-bottom: 0.5rem;">Google Maps / Sentinel-2 (Óptico)</h4>
+                        <p style="font-size: 0.8rem; line-height: 1.4; color: var(--text-dim);">
+                            Usa luz visible (como una foto normal). 
+                            <strong>Diferencia:</strong> Muestra colores reales (azufre, rocas, nieve). 
+                            Bloqueado por nubes. Es mejor para identificar depósitos de ceniza superficiales y coladas de lava recientes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Telemetría Crítica -->
+            <div class="card">
+                <div class="card-title">Sensores de Riesgo (IA Predictive)</div>
+                <div class="stat-group">
+                    <div class="stat-box">
+                        <p style="font-size: 0.7rem; color: var(--text-dim);">DIF. VERTICAL (InSAR)</p>
+                        <div class="stat-value">+0.42 <span class="stat-unit">mm</span></div>
+                    </div>
+                    <div class="stat-box">
+                        <p style="font-size: 0.7rem; color: var(--text-dim);">HUMEDAD SUELO</p>
+                        <div class="stat-value">68<span class="stat-unit">%</span></div>
+                    </div>
+                    <div class="stat-box">
+                        <p style="font-size: 0.7rem; color: var(--text-dim);">NIVEL RÍO CAUCA</p>
+                        <div class="stat-value">2.1<span class="stat-unit">m</span></div>
+                    </div>
+                    <div class="stat-box" style="border-color: var(--success);">
+                        <p style="font-size: 0.7rem; color: var(--text-dim);">RIESGO VOLCÁNICO</p>
+                        <div class="stat-value" style="color: var(--success);">BAJO</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <h4 style="font-size: 0.8rem; margin-bottom: 1rem; color: var(--text-dim);">ESTADO DE NACIENTES</h4>
+                    <div style="height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden;">
+                        <div style="width: 85%; height: 100%; background: var(--accent);"></div>
+                    </div>
+                    <p style="font-size: 0.7rem; margin-top: 5px; text-align: right;">85% Caudal Histórico</p>
+                </div>
+            </div>
+
+            <!-- Vigilancia SGC -->
+            <div class="card" style="grid-column: span 1; border-left: 5px solid #ffcc00;">
+                <div class="card-title">
+                    SGC Live Feed
+                    <span style="color: #ffcc00;">OFICIAL (REST API)</span>
+                </div>
+                <div id="sgc-feed" style="font-family: monospace; font-size: 0.8rem; color: #00ff00; background: rgba(0,255,0,0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(0,255,0,0.1); min-height: 150px;">
+                    <span style="color: #ffcc00;">[SGC-CONNECT]</span> INICIALIZANDO FEED...
+                </div>
+                <div style="font-size: 0.7rem; color: #ffcc00; margin-top: 8px; font-weight: 600;">
+                    * Datos actualizados vía Integración Local (Backend Python).
+                </div>
+                <div id="sgc-feed" style="font-family: monospace; font-size: 0.8rem; color: #00ff00; background: rgba(0,255,0,0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(0,255,0,0.1); min-height: 150px;">
+                    <span style="color: #ffcc00;">[SGC-CONNECT]</span> INICIALIZANDO FEED...
+                </div>
+                <div style="font-size: 0.7rem; color: #ffcc00; margin-top: 8px; font-weight: 600;">
+                    * Datos actualizados vía Integración Local (Backend Python).
+                </div>
+                <!-- Carga de datos local para saltar restricciones de CORS -->
+                <script src="sgc_data.js"></script>
+                <script>
+                    function updateSGCFeed() {
+                        const feed = document.getElementById('sgc-feed');
+                        // La variable 'sgcData' viene de sgc_data.js
+                        if (typeof sgcData === 'undefined' || !sgcData || sgcData.length === 0) {
+                            feed.innerHTML = '<span style="color: #ffcc00;">[SGC-CONNECT]</span> SESIÓN ACTIVA <br><br> > ESTADO: <span style="color: #fff;">ESTABLE</span> <br> > EVENTOS RECIENTES: <span style="color: #94a3b8;">NO SE DETECTAN SISMOS (RADIO 50KM)</span> <br> > NIVEL ACTIVIDAD: <span style="background: #00c853; color: #000; padding: 0 4px;">VERDE</span>';
+                            return;
+                        }
+                        let html = '<span style="color: #ffcc00;">[SGC-CONNECT]</span> ' + sgcData.length + ' EVENTOS DETECTADOS <br><br>';
+                        sgcData.forEach(item => {
+                            const attr = item.attributes;
+                            html += `> ${attr.FECHA_UTC} | MAG: ${attr.MAGNITUD} | ${attr.LUGAR.substring(0,30)}... <br>`;
+                        });
+                        html += `<br> > NIVEL ACTIVIDAD: <span style="background: #00c853; color: #000; padding: 0 4px;">VERDE</span>`;
+                        feed.innerHTML = html;
+                    }
+                    
+                    // Recargar el script cada 5 segundos para simular "real-time" sin fetch
+                    function reloadDataScript() {
+                        const oldScript = document.querySelector('script[src="sgc_data.js"]');
+                        if (oldScript) oldScript.remove();
+                        const newScript = document.createElement('script');
+                        newScript.src = 'sgc_data.js?t=' + new Date().getTime();
+                        newScript.onload = updateSGCFeed;
+                        document.body.appendChild(newScript);
+                    }
+
+                    setInterval(reloadDataScript, 5000);
+                    updateSGCFeed();
+                </script>
+            </div>
+
+            <!-- Actividad Reciente -->
+            <div class="card" style="grid-column: span 2;">
+                <div class="card-title">Últimas Alertas Generadas por IA</div>
+                <ul class="alert-list">
+                    <li class="alert-item">
+                        <div class="alert-icon" style="background: rgba(168, 85, 247, 0.1); color: #a855f7;">🤖</div>
+                        <div class="alert-info">
+                            <h4>Segmentación IA Completada</h4>
+                            <p>K-means clustering detectó 4 clases texturales en el cráter del Puracé.</p>
+                        </div>
+                        <div style="margin-left: auto; font-size: 0.7rem; color: var(--text-dim);">Hace 5 min</div>
+                    </li>
+                    <li class="alert-item">
+                        <div class="alert-icon" style="background: rgba(255, 75, 43, 0.1); color: var(--danger);">📈</div>
+                        <div class="alert-info">
+                            <h4>Cambio Multitemporal Detectado</h4>
+                            <p>Diferencia de señal radar observada entre el 10 y 16 de marzo.</p>
+                        </div>
+                        <div style="margin-left: auto; font-size: 0.7rem; color: var(--text-dim);">Hace 15 min</div>
+                    </li>
+                    <li class="alert-item">
+                        <div class="alert-icon" style="background: rgba(0, 210, 255, 0.1); color: var(--accent);">📡</div>
+                        <div class="alert-info">
+                            <h4>Archivo Histórico Consolidado</h4>
+                            <p>20 adquisiciones Sentinel-1 SLC listas para análisis Fase 2.</p>
+                        </div>
+                        <div style="margin-left: auto; font-size: 0.7rem; color: var(--text-dim);">Hace 30 min</div>
+                    </li>
+                </ul>
+            <div class="card" style="grid-column: span 2;">
+                <h3><i class="fas fa-wave-square"></i> Advanced InSAR Monitoring (Sentinel-1A vs 1C)</h3>
+                <p>Surface deformation baseline: <strong>March 10, 2026 - March 16, 2026</strong>. Fringes represent relative phase shifts at 20m resolution.</p>
+                <div class="map-container" id="insar-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 500px; background: transparent;">
+                    <div style="position: relative; border: 1px solid var(--glass-border); border-radius: 8px; overflow: hidden; background: #000;">
+                        <span style="position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 0.7rem; padding: 4px 8px; background: rgba(0,0,0,0.8); border-radius: 4px; color: var(--accent);">PHASE (INTERFEROGRAM)</span>
+                        <img src="purace_ifg_v3_final.png" alt="InSAR Interferogram" class="map-img" style="width: 100%; height: 100%; object-fit: contain;">
+                        <div class="legend" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 10px; background: rgba(0,0,0,0.8);">
+                            <div class="legend-bar" style="background: linear-gradient(to right, #ff00ff, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000); height: 6px; border-radius: 3px;"></div>
+                        </div>
+                    </div>
+                    <div style="position: relative; border: 1px solid var(--glass-border); border-radius: 8px; overflow: hidden; background: #000;">
+                        <span style="position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 0.7rem; padding: 4px 8px; background: rgba(0,0,0,0.8); border-radius: 4px; color: var(--accent);">COHERENCE (RELIABILITY)</span>
+                        <img src="purace_reliability_v3_final.png" alt="InSAR Coherence" class="map-img" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                </div>
+                <div class="button-group" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                    <button class="btn" onclick="window.open('walkthrough.md')">View Full Processing Report</button>
+                    <button class="btn" style="background: transparent; color: var(--accent); border: 1px solid var(--accent);">Pipeline Status: OK</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

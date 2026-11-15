@@ -1,0 +1,29 @@
+# Detalle Técnico: Fase 2 - Inteligencia de Datos y Vigilancia
+
+La Fase 2 es el "cerebro" del proyecto. Aquí es donde transformamos terabytes de datos gratuitos en seguridad para Samanga Baja.
+
+## 1. La "Película" del Terreno (InSAR Histórico 2014-2026)
+No solo miraremos el hoy. Usaremos la IA para procesar **todas** las imágenes desde que se lanzó el Sentinel-1 en 2014.
+*   **Qué lograremos:** Veremos cómo ha "respirado" el **Volcán Puracé** en los últimos 12 años.
+*   **Valor:** Esto nos permite saber qué movimientos son "normales" y qué movimientos son precursores de un desastre. Es crear la huella digital del volcán.
+
+## 2. Inventario Hídrico Multinivel (Sentinel-2)
+Mapearemos cada metro de las cuencas que alimentan el acueducto rural.
+*   **Índices Avanzados:** No solo NDVI (vegetación), sino también **NDWI** (agua) y **NDMI** (humedad del suelo).
+*   **Qué lograremos:** Identificar zonas de recarga hídrica que están perdiendo humedad. Sabremos exactamente dónde hay que reforestar para que no se seque el agua en 5 años.
+
+## 3. Fusión de Datos (Data Fusion)
+Combinaremos la vista de radar (que atraviesa nubes y ve movimientos) con la vista óptica (que ve salud de plantas y color).
+*   **Resultado:** Un mapa híbrido que permite ver, por ejemplo, si una zona de café está perdiendo salud porque el terreno debajo se está deslizando (detección temprana de derrubios).
+
+## 4. Entrenamiento de la IA (Machine Learning)
+Entrenaremos modelos específicos para el territorio de Samanga.
+*   **Detección de Anomalías:** La IA aprenderá a detectar automáticamente "cambios raros" en las imágenes. Si aparece una mancha marrón nueva en una zona de alta pendiente, la IA enviará una notificación: "Posible inicio de derrubio detectado".
+
+## 5. Mapas de Aptitud para Tierras
+Generaremos cartografía de altísima precisión para la **Junta de Acción Comunal**.
+*   **Uso:** Estos mapas dirán: "Esta tierra es baldía, es estable y es apta para café grado exportación". Es el documento técnico que necesitan para negociar con el Estado.
+
+---
+> [!TIP]
+> En la Fase 2 pasamos de tener "datos" a tener **inteligencia territorial**. Es el momento donde la Universidad del Cauca y el equipo técnico validan científicamente todo el proyecto ante MinCiencias.

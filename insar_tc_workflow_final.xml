@@ -1,0 +1,34 @@
+<graph id="InSAR_TC">
+  <version>1.0</version>
+  <node id="Read">
+    <operator>Read</operator>
+    <parameters>
+      <file>c:\Copernico\purace_slant_range.dim</file>
+    </parameters>
+  </node>
+
+  <node id="TerrainCorrection">
+    <operator>Terrain-Correction</operator>
+    <sources>
+      <sourceProduct refid="Read"/>
+    </sources>
+    <parameters>
+      <sourceBands>phase_ifg,coh_IW1_VV_10Mar2026_16Mar2026</sourceBands>
+      <demName>SRTM 3Sec</demName>
+      <pixelSpacingInMeter>20.0</pixelSpacingInMeter>
+      <mapProjection>WGS84(DD)</mapProjection>
+      <saveSelectedSourceBand>true</saveSelectedSourceBand>
+    </parameters>
+  </node>
+
+  <node id="Write">
+    <operator>Write</operator>
+    <sources>
+      <sourceProduct refid="TerrainCorrection"/>
+    </sources>
+    <parameters>
+      <file>c:\Copernico\purace_insar_tc.dim</file>
+      <formatName>BEAM-DIMAP</formatName>
+    </parameters>
+  </node>
+</graph>

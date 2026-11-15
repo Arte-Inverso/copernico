@@ -1,0 +1,148 @@
+<graph id="Graph">
+  <version>1.0</version>
+  <node id="ReadMaster">
+    <operator>Read</operator>
+    <parameters>
+      <file>c:\Copernico\S1A_IW_SLC__1SDV_20260310T105208_20260310T105236_063564_07FCFB_FA9C.SAFE</file>
+    </parameters>
+  </node>
+  <node id="ReadSlave">
+    <operator>Read</operator>
+    <parameters>
+      <file>c:\Copernico\S1C_IW_SLC__1SDV_20260316T105045_20260316T105113_006788_00DB83_BEA4.SAFE</file>
+    </parameters>
+  </node>
+  
+  <!-- TOPS Split Master -->
+  <node id="TOPS-Split-Master">
+    <operator>TOPSAR-Split</operator>
+    <sources>
+      <sourceProduct>ReadMaster</sourceProduct>
+    </sources>
+    <parameters>
+      <subswath>IW1</subswath>
+      <selectedPolarisations>VV</selectedPolarisations>
+      <firstBurstIndex>1</firstBurstIndex>
+      <lastBurstIndex>3</lastBurstIndex>
+    </parameters>
+  </node>
+  
+  <!-- TOPS Split Slave -->
+  <node id="TOPS-Split-Slave">
+    <operator>TOPSAR-Split</operator>
+    <sources>
+      <sourceProduct>ReadSlave</sourceProduct>
+    </sources>
+    <parameters>
+      <subswath>IW1</subswath>
+      <selectedPolarisations>VV</selectedPolarisations>
+      <firstBurstIndex>1</firstBurstIndex>
+      <lastBurstIndex>3</lastBurstIndex>
+    </parameters>
+  </node>
+  
+  <!-- Apply Orbit Master -->
+  <node id="Apply-Orbit-Master">
+    <operator>Apply-Orbit-File</operator>
+    <sources>
+      <sourceProduct>TOPS-Split-Master</sourceProduct>
+    </sources>
+    <parameters>
+      <orbitType>Sentinel Precise (Auto Download)</orbitType>
+      <polyDegree>3</polyDegree>
+      <continueOnFail>true</continueOnFail>
+    </parameters>
+  </node>
+  
+  <!-- Apply Orbit Slave -->
+  <node id="Apply-Orbit-Slave">
+    <operator>Apply-Orbit-File</operator>
+    <sources>
+      <sourceProduct>TOPS-Split-Slave</sourceProduct>
+    </sources>
+    <parameters>
+      <orbitType>Sentinel Precise (Auto Download)</orbitType>
+      <polyDegree>3</polyDegree>
+      <continueOnFail>true</continueOnFail>
+    </parameters>
+  </node>
+  
+  <!-- Back-Geocoding -->
+  <node id="Back-Geocoding">
+    <operator>Back-Geocoding</operator>
+    <sources>
+      <sourceProduct.1>Apply-Orbit-Master</sourceProduct.1>
+      <sourceProduct.2>Apply-Orbit-Slave</sourceProduct.2>
+    </sources>
+    <parameters>
+      <demName>SRTM 3Sec</demName>
+      <demResamplingMethod>BICUBIC_INTERPOLATION</demResamplingMethod>
+      <resamplingType>BICUBIC_INTERPOLATION</resamplingType>
+      <maskOutAreaWithoutElevation>true</maskOutAreaWithoutElevation>
+      <outputDerampDemodPhase>true</outputDerampDemodPhase>
+    </parameters>
+  </node>
+  
+  <!-- Interferogram Generation -->
+  <node id="Interferogram">
+    <operator>Interferogram</operator>
+    <sources>
+      <sourceProduct>Back-Geocoding</sourceProduct>
+    </sources>
+    <parameters>
+      <subtractFlatEarthPhase>true</subtractFlatEarthPhase>
+      <srpPolynomialDegree>5</srpPolynomialDegree>
+      <srpNumberPoints>501</srpNumberPoints>
+      <orbitDegree>3</orbitDegree>
+      <includeCoherence>true</includeCoherence>
+      <cohWinAz>10</cohWinAz>
+      <cohWinRg>10</cohWinRg>
+      <squarePixel>true</squarePixel>
+    </parameters>
+  </node>
+  
+  <!-- Deburst -->
+  <node id="Deburst">
+    <operator>TOPSAR-Deburst</operator>
+    <sources>
+      <sourceProduct>Interferogram</sourceProduct>
+    </sources>
+  </node>
+  
+  <!-- TopoPhase Removal -->
+  <node id="TopoPhaseRemoval">
+    <operator>TopoPhaseRemoval</operator>
+    <sources>
+      <sourceProduct>Deburst</sourceProduct>
+    </sources>
+    <parameters>
+      <orbitDegree>3</orbitDegree>
+      <demName>SRTM 3Sec</demName>
+    </parameters>
+  </node>
+  
+  <!-- Goldstein Filter -->
+  <node id="Goldstein">
+    <operator>GoldsteinPhaseFiltering</operator>
+    <sources>
+      <sourceProduct>TopoPhaseRemoval</sourceProduct>
+    </sources>
+    <parameters>
+      <alpha>1.0</alpha>
+      <FFTSizeString>64</FFTSizeString>
+      <windowSizeString>3</windowSizeString>
+    </parameters>
+  </node>
+  
+  <!-- Write result (Slant Range) -->
+  <node id="Write">
+    <operator>Write</operator>
+    <sources>
+      <sourceProduct>Goldstein</sourceProduct>
+    </sources>
+    <parameters>
+      <file>c:\Copernico\purace_slant_range.dim</file>
+      <formatName>BEAM-DIMAP</formatName>
+    </parameters>
+  </node>
+</graph>

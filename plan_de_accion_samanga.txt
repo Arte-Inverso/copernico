@@ -1,0 +1,32 @@
+# Plan de Acción: Proyecto Samanga Sostenible
+
+Este documento organiza toda la inteligencia técnica y estratégica generada para asegurar el éxito del proyecto ante **MinCiencias** y la comunidad.
+
+## Fase 1: Preparación y Validación Técnico-Legal (Ahora - Abril 2026)
+*   **Asegurar Alianzas:** Cierre de acuerdos con la **Universidad del Cauca** y el socio tecnológico.
+*   **Configuración del Downloader:** Ejecución del script [download_sar.py](file:///c:/Copernico/download_sar.py) para obtener la línea base de datos radar (Sentinel-1 SLC).
+*   **Radicación:** Inscripción oficial en la plataforma **SuCIEN** de MinCiencias antes del 13 de abril.
+*   **Documentación de Soporte:** Uso de la [Propuesta Formal](file:///C:/Users/JENNER%20ZU%C3%91IGA/.gemini/antigravity/brain/abc9ada4-b981-44d5-a258-cd7c88a6e296/minciencias_proposal_2026.md).
+
+## Fase 2: Inteligencia de Datos y Vigilancia (Meses 1-4 Post-Aprobación)
+*   Ver [Detalle Técnico de Fase 2](file:///C:/Users/JENNER%20ZU%C3%91IGA/.gemini/antigravity/brain/abc9ada4-b981-44d5-a258-cd7c88a6e296/detalle_fase_2.md) para más profundidad.
+*   **Línea Base InSAR:** Generación de la serie histórica de deformación de los volcanes Puracé y Sotará.
+*   **Mapeo Hídrico:** Clasificación de nacientes y cuencas mediante Sentinel-2 ([Metodología Copernicus](file:///C:/Users/JENNER%20ZU%C3%91IGA/.gemini/antigravity/brain/abc9ada4-b981-44d5-a258-cd7c88a6e296/metodologia_copernicus.md)).
+*   **Entrenamiento de IA:** Configuración de algoritmos para detectar "puntos calientes" de riesgo.
+
+## Fase 3: Despliegue en el Territorio (Meses 5-10)
+*   **Instalación IoT:** Despliegue de sensores de nivel, conductividad y temperatura en puntos críticos de Samanga Baja.
+*   **App Comunitaria:** Lanzamiento de la plataforma de alertas para la JAC.
+*   **Inventario para Tierras:** Generación de cartografía para la regularización de baldíos.
+
+## Fase 4: Consolidación y Sostenibilidad (Meses 11-14)
+*   **Entrega a Entidades:** Presentación de resultados al SGC, la Alcaldía y la Agencia Nacional de Tierras.
+*   **Formación Local:** Capacitación de la "Guardia Hídrica" de Samanga en el uso de la tecnología.
+
+---
+
+## ¿Qué más se podría hacer? (Expansión)
+1.  **Gemelo Digital (Digital Twin):** Crear un modelo 3D dinámico de Samanga Baja que simule el trayecto de un lahar en tiempo real.
+2.  **Soberanía de Datos Rurales:** Expandir el sistema para incluir censos de salud y producción agrícola en la misma App (Efecto Colateral Positivo).
+3.  **Integración de Energías Alternativas:** Alimentar los sensores IoT con micro-turbinas hidráulicas o paneles solares, asegurando que el SAT-I funcione incluso en apagones.
+4.  **Certificación de Café de Origen Digital:** Usar los datos de Copernicus para certificar que el café de Samanga es "producido con vigilancia ambiental y protección de cuencas", aumentando su precio de exportación.

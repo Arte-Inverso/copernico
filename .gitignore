@@ -1,0 +1,30 @@
+# Datos satelitales crudos y pesados (archivos de más de 50MB a varios GB)
+*.zip
+*.tar
+*.tar.gz
+*.SAFE
+*.SAFE/
+*.SAFE.zip
+*.data/
+*.dim
+*.img
+*.hdr
+*.jp2
+S2_Updated_2026/
+S1*
+S3*
+purace_*.data/
+purace_*.dim
+
+# Python cache y entornos
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Archivos de sistema y logs
+*.log
+.DS_Store
+Thumbs.db
