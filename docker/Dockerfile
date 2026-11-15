@@ -33,19 +33,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # =============================================================================
-# 2. MINICONDA - entorno Python aislado
+# 2. MINIFORGE - entorno conda-forge 100% comunitario y libre
 # =============================================================================
 ENV CONDA_DIR=/opt/conda
 ENV PATH=$CONDA_DIR/bin:$PATH
 
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+RUN wget --quiet https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -O /tmp/miniforge.sh && \
     mkdir -p $CONDA_DIR && \
-    /bin/bash /tmp/miniconda.sh -b -f -p $CONDA_DIR && \
-    rm /tmp/miniconda.sh && \
+    /bin/bash /tmp/miniforge.sh -b -f -p $CONDA_DIR && \
+    rm /tmp/miniforge.sh && \
     $CONDA_DIR/bin/conda init bash && \
-    $CONDA_DIR/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main || true && \
-    $CONDA_DIR/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r || true && \
-    printf "channels:\n  - conda-forge\n  - nodefaults\nchannel_priority: strict\n" > /root/.condarc && \
     $CONDA_DIR/bin/conda clean -afy
 
 # =============================================================================
@@ -53,9 +50,7 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
 # =============================================================================
 COPY environment.yml /tmp/environment.yml
 
-RUN $CONDA_DIR/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main || true && \
-    $CONDA_DIR/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r || true && \
-    $CONDA_DIR/bin/conda env create -f /tmp/environment.yml && \
+RUN $CONDA_DIR/bin/mamba env create -f /tmp/environment.yml || $CONDA_DIR/bin/conda env create -f /tmp/environment.yml && \
     $CONDA_DIR/bin/conda clean -afy
 
 # Activar entorno por defecto
