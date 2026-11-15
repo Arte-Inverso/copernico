@@ -242,20 +242,30 @@ function initSigMap() {
         sgcData.forEach(ev => {
             const attr = ev.attributes;
             if (attr.LATITUD && attr.LONGITUD) {
+                // Color por profundidad: Somero (<3km: Rojo vibrante), Intermedio (3-8km: Naranja), Profundo (>8km: Azul)
+                const depthColor = attr.PROFUNDIDAD < 3.0 ? '#ef4444' : (attr.PROFUNDIDAD <= 8.0 ? '#f59e0b' : '#3b82f6');
                 const sMarker = L.circleMarker([attr.LATITUD, attr.LONGITUD], {
-                    radius: Math.max(6, attr.MAGNITUD * 4.2),
-                    fillColor: '#ff4b2b',
+                    radius: Math.max(6, attr.MAGNITUD * 4.5),
+                    fillColor: depthColor,
                     color: '#ffffff',
                     weight: 1.5,
-                    fillOpacity: 0.85
+                    fillOpacity: 0.88
                 });
+                
+                const distInfo = attr.VOLCAN_ASOCIADO && attr.VOLCAN_ASOCIADO.includes('Puracé') 
+                    ? `A <strong>${attr.DIST_PURACE_KM} km</strong> del Cráter Puracé`
+                    : `A <strong>${attr.DIST_SOTARA_KM} km</strong> del Complejo Sotará`;
+
                 sMarker.bindPopup(`
-                    <div style="font-family: 'Inter', sans-serif; font-size: 0.82rem;">
-                        <strong style="color: #ff4b2b;">🔴 Sismo SGC - OVSPop</strong><br>
+                    <div style="font-family: 'Inter', sans-serif; font-size: 0.82rem; line-height: 1.4;">
+                        <strong style="color: ${depthColor}; font-size: 0.9rem;">🌋 ${attr.VOLCAN_ASOCIADO || 'Sismo SGC - OVSPop'}</strong><br>
                         <strong>Lugar:</strong> ${attr.LUGAR}<br>
-                        <strong>Magnitud:</strong> ${attr.MAGNITUD.toFixed(1)} ML | <strong>Prof:</strong> ${attr.PROFUNDIDAD || '--'} km<br>
-                        <strong>Tipo:</strong> ${attr.TIPO || 'Volcano-Tectónico'}<br>
-                        <strong>Fecha UTC:</strong> ${attr.FECHA_UTC}
+                        <strong>Magnitud:</strong> ${attr.MAGNITUD.toFixed(1)} ML | <strong>Prof:</strong> ${attr.PROFUNDIDAD} km<br>
+                        <strong>Foco:</strong> ${attr.CLASIFICACION_PROF || 'Volcánico'}<br>
+                        <strong>Tipo:</strong> ${attr.TIPO || 'VT (Fracturamiento)'}<br>
+                        <strong>Energía Liberada:</strong> ${attr.ENERGIA_TXT || '--'}<br>
+                        <strong>Proximidad:</strong> ${distInfo}<br>
+                        <span style="color: #94a3b8; font-size: 0.75rem;">Fecha UTC: ${attr.FECHA_UTC}</span>
                     </div>
                 `);
                 sgcGroup.addLayer(sMarker);
@@ -281,14 +291,16 @@ function renderSgcData() {
             const item = document.createElement('div');
             item.className = 'ticker-item';
 
-            const magColor = attr.MAGNITUD >= 2.0 ? 'var(--accent-red)' : 'var(--text-primary)';
+            const magColor = attr.MAGNITUD >= 1.8 ? 'var(--accent-red)' : 'var(--text-primary)';
             const profInfo = attr.PROFUNDIDAD ? ` | Prof: ${attr.PROFUNDIDAD} km` : '';
-            const tipoInfo = attr.TIPO ? ` (${attr.TIPO})` : '';
+            const tipoInfo = attr.TIPO ? ` • ${attr.TIPO}` : '';
+            const energiaBadge = attr.ENERGIA_TXT ? `<span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; margin-left: 6px;">⚡ ${attr.ENERGIA_TXT}</span>` : '';
 
             item.innerHTML = `
                 <div>
                     <span style="font-weight: 600; color: ${magColor}">${attr.LUGAR || 'Evento sísmico'}</span>
                     <span style="font-size: 0.8rem; color: var(--text-secondary);">${tipoInfo}</span>
+                    ${energiaBadge}
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.8rem;">
                     <span style="color: var(--text-secondary); font-size: 0.85rem;"><strong>${attr.MAGNITUD.toFixed(1)} ML</strong>${profInfo} — ${attr.FECHA_UTC}</span>
