@@ -4,7 +4,7 @@
 # Basado en Ubuntu 22.04 + Miniconda + MintPy + SNAP
 # =============================================================================
 
-FROM ubuntu:22.04
+FROM condaforge/miniforge3:latest
 
 LABEL maintainer="Arte-Inverso (Jenner Zúñiga)"
 LABEL project="Copernico - Vigilancia Volcánica e Hidrológica Samanga Baja"
@@ -22,7 +22,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc g++ gfortran \
     git cmake wget curl unzip \
-    python3.10 python3.10-dev python3-pip \
     libfftw3-dev libgdal-dev libproj-dev \
     libhdf5-dev libnetcdf-dev \
     libgeos-dev libxml2-dev libxslt1-dev \
@@ -32,18 +31,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     default-jre \
     && rm -rf /var/lib/apt/lists/*
 
-# =============================================================================
-# 2. MINIFORGE - entorno conda-forge 100% comunitario y libre
-# =============================================================================
 ENV CONDA_DIR=/opt/conda
 ENV PATH=$CONDA_DIR/bin:$PATH
-
-RUN curl -fsSL https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o /tmp/miniforge.sh && \
-    mkdir -p $CONDA_DIR && \
-    /bin/bash /tmp/miniforge.sh -b -f -p $CONDA_DIR && \
-    rm /tmp/miniforge.sh && \
-    $CONDA_DIR/bin/conda init bash && \
-    $CONDA_DIR/bin/conda clean -afy
 
 # =============================================================================
 # 3. ENTORNO CONDA PARA COPERNICO
