@@ -82,7 +82,7 @@ COPY . $COPERNICO_HOME/
 
 # Asegurar permisos de ejecución para scripts
 RUN chmod +x $COPERNICO_HOME/scripts/*.sh 2>/dev/null || true && \
-    find $COPERNICO_HOME -name "*.py" -exec chmod +x {} \\; 2>/dev/null || true
+    find $COPERNICO_HOME -name "*.py" -exec chmod +x {} + 2>/dev/null || true
 
 # =============================================================================
 # 7. CONFIGURACIÓN FINAL
