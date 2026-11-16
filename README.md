@@ -281,10 +281,10 @@ Este proyecto implementa y cita las siguientes referencias científicas:
 - **Tamayo Duque, S. et al. (2023)** — Índice de Estabilidad de Amplitud (ASI) para detección de dispersores persistentes. *Remote Sensing 15(21), 5249*.
 - **Ávila Vélez, D. et al. (2026)** — Dispersores Distribuidos SBAS y descomposición geométrica vertical/este-oeste. *Ciencia e Ingeniería Neogranadina 36(1), 7889*.
 
-### Próximamente (TomoSAR cloud)
+### Próximamente (Procesamiento InSAR Multitemporal)
 
-- **Ho Tong Minh, D. (2023)** — INRAE TomoSAR service: a free scientific calculation on persistent and distributed scatterers radar interferometry. *IGARSS 2023*.
-- **Ho Tong Minh, D. (2024)** — TomoSAR: Unlocking Magnitude 7.8 Turkey Earthquake and its free scientific service. *IGARSS 2024*.
+- **Ho Tong Minh, D. (2023)** — INRAE InSAR Multitemporal service: a free scientific calculation on persistent and distributed scatterers radar interferometry. *IGARSS 2023*.
+- **Ho Tong Minh, D. (2024)** — InSAR Multitemporal: Unlocking Magnitude 7.8 Turkey Earthquake and its free scientific service. *IGARSS 2024*.
 - **Ho Tong Minh, D. et al. (2022)** — Compressed SAR Interferometry in the Big Data Era. *Remote Sensing 14(2), 390*.
 
 ---
@@ -300,7 +300,7 @@ Este proyecto implementa y cita las siguientes referencias científicas:
 - [x] Visor 3D WebGL multi-territorio
 - [x] Docker reproducible
 - [ ] **Validación con GNSS IGAC (POVA)** ← en curso
-- [ ] **Integración TomoSAR cloud (Dr. Dinh)** ← email enviado
+- [ ] **Integración Procesamiento Multitemporal Local** ← email enviado
 - [ ] Corrección atmosférica ERA5 vía PyAPS3
 
 ### v2.2 (Q2 2027)
@@ -338,7 +338,7 @@ Este proyecto implementa y cita las siguientes referencias científicas:
 - **TECNICAFÉ** — Asociación de caficultores del Cauca (interés en NDVI cafetero)
 - **Colegio Mayor del Cauca (UNIMAYOR)** — Afiliación institucional propuesta para Minciencias 2026
 - **OVSPop (SGC Popayán)** — Observatorio Vulcanológico y Sismológico de Popayán (colaboración técnica informal)
-- **Dr. Dinh Ho Tong Minh (INRAE, Francia)** — Solicitud de acceso a TomoSAR cloud enviada
+- **Procesamiento Multitemporal (INRAE, Francia)** — Solicitud de acceso a Procesamiento InSAR Multitemporal enviada
 
 ### Convocatoria
 
@@ -354,7 +354,7 @@ Proyecto en preparación para **Minciencias 2026** (Ministerio de Ciencia, Tecno
 
 ## 🙏 Agradecimientos
 
-- **Dr. Dinh Ho Tong Minh** (INRAE, Francia) por sus tutoriales en [@DinhHOTONGMINH](https://youtube.com/@DinhHOTONGMINH) sobre SNAP+StaMPS, TomoSAR y ComSAR
+- **Procesamiento Multitemporal** (INRAE, Francia) por sus tutoriales en [@DinhHOTONGMINH](https://youtube.com/@DinhHOTONGMINH) sobre SNAP+StaMPS, InSAR Multitemporal y ComSAR
 - **Canal [@geoscienceengineering](https://youtube.com/@geoscienceengineering)** por tutoriales sobre MintPy, ISCE2 y ERA5
 - **Tamayo Duque et al. (2023)** y **Ávila Vélez et al. (2026)** por publicaciones colombianas recientes que adaptaron PSInSAR al contexto andino
 - **ESA Copernicus** y **NASA ASF** por datos Sentinel abiertos

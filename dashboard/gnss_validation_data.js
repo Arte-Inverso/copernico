@@ -39,5 +39,5 @@ var gnssValidationData = {
     "end_date": "2026-11-01",
     "gnss_velocity_los_mm_per_year": 2.21
   },
-  "interpretation": "Resultados InSAR presentan discrepancia significativa con GNSS IGAC (bias > 10 mm). Posibles causas: (1) solo 2 im\u00e1genes (par \u00fanico), (2) ausencia de correcci\u00f3n atmosf\u00e9rica ERA5, (3) unwrapping sin red de control robusta. Recomendado: TomoSAR cloud con 30+ im\u00e1genes."
+  "interpretation": "Resultados InSAR presentan discrepancia significativa con GNSS IGAC (bias > 10 mm). Posibles causas: (1) solo 2 im\u00e1genes (par \u00fanico), (2) ausencia de correcci\u00f3n atmosf\u00e9rica ERA5, (3) unwrapping sin red de control robusta. Recomendado: Procesamiento InSAR Multitemporal con 30+ im\u00e1genes."
 };\n

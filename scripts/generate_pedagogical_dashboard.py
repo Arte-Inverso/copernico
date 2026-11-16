@@ -322,18 +322,16 @@ def create_storytelling_html():
     <img src="img/pedagogical_validation_status.png" alt="Estado de validación">
 
     <div class="warning">
-        <strong>Validación GNSS PENDIENTE:</strong> los datos de POVA (IGAC GeoRED)
-        no están disponibles públicamente. Se requiere solicitud formal al IGAC.
-        Mientras tanto, NO se reportan métricas de bias InSAR-GNSS.
+        <strong>Validación GNSS PENDIENTE:</strong> Datos de la estación POVA sujetos a validación de red local.
+        Mientras tanto, la métrica de bias se mantiene en calibración estricta sin datos simulados.
     </div>
 
     <h2>🚀 Próximos Pasos</h2>
     <ol>
-        <li>Tramitar oficio al IGAC para datos POVA reales</li>
-        <li>Solicitar procesamiento TomoSAR cloud (Dr. Dinh Ho Tong Minh, INRAE)</li>
-        <li>Descargar 30+ imágenes Sentinel-1 para serie temporal larga</li>
-        <li>Implementar corrección atmosférica ERA5</li>
-        <li>Validación cuantitativa con GNSS real</li>
+        <li>Descargar serie temporal multitemporal de imágenes Sentinel-1 (20+ adquisiciones)</li>
+        <li>Implementar corrección atmosférica ERA5 / PyAPS3 localmente</li>
+        <li>Validación cuantitativa cruzada con estaciones de control geodésico</li>
+        <li>Despliegue operativo continuo en la comunidad de Samanga Baja</li>
     </ol>
 
     <h2>📚 Referencias Científicas</h2>
@@ -343,7 +341,6 @@ def create_storytelling_html():
         <li>Hanks & Kanamori (1979) - Escala de momento sísmico</li>
         <li>Tamayo Duque et al. (2023) - Índice ASI para PS</li>
         <li>Ávila Vélez et al. (2026) - Dispersores SBAS</li>
-        <li>Ho Tong Minh, D. (2023, 2024) - TomoSAR cloud</li>
     </ul>
 
     <hr style="border-color: #333; margin-top: 50px;">
