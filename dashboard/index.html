@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="gnss_validation_data.js"></script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -516,7 +517,18 @@
                     </div>
                 </div>
             </section>
-        </main>
+        
+    <!-- Sección Validación GNSS IGAC -->
+    <section id="gnss-validation" class="theory-section" style="margin-top: 30px;">
+        <h2><i class="fa-solid fa-satellite-dish"></i> Validación InSAR vs GNSS IGAC</h2>
+        <p>Validación cuantitativa de resultados InSAR contra estación continua POVA (Popayán) de la red GeoRED del IGAC.</p>
+        <div id="gnss-validation-content" style="margin-top: 20px;"></div>
+        <div style="text-align: center; margin-top: 20px;">
+            <img src="gnss_validation_plot.png" alt="Validación InSAR vs GNSS POVA" style="width: 100%; max-width: 900px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+        </div>
+    </section>
+
+</main>
     </div>
 
     <!-- Data & Map Scripts -->
