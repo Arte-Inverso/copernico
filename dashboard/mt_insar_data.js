@@ -61,18 +61,60 @@ var mtInsarData = {
       "title": "Color Real 10m Cráter Volcán Puracé (Sentinel-2 2026)"
     },
     "purace_ifg": {
-      "url": "../purace_ifg_real_overlay.png",
+      "url": "purace_ifg_real_overlay.png",
       "bounds": [
         [
-          2.25,
-          -76.45
+          2.27,
+          -76.44
         ],
         [
-          2.32,
+          2.36,
           -76.35
         ]
       ],
-      "title": "Fase D-InSAR (APS filtrado Mar-Nov 2026) Volcán Puracé"
+      "title": "Fase D-InSAR C-Band (16-Mar vs 06-Nov 2026) Volcán Puracé"
+    },
+    "purace_coh": {
+      "url": "purace_coh_real_overlay.png",
+      "bounds": [
+        [
+          2.27,
+          -76.44
+        ],
+        [
+          2.36,
+          -76.35
+        ]
+      ],
+      "title": "Coherencia InSAR γ Compleja (16-Mar vs 06-Nov 2026) Puracé"
+    },
+    "samanga_ifg": {
+      "url": "samanga_ifg_real_overlay.png",
+      "bounds": [
+        [
+          2.38,
+          -76.62
+        ],
+        [
+          2.45,
+          -76.54
+        ]
+      ],
+      "title": "Fase D-InSAR C-Band (16-Mar vs 06-Nov 2026) Samanga & Popayán"
+    },
+    "samanga_coh": {
+      "url": "samanga_coh_real_overlay.png",
+      "bounds": [
+        [
+          2.38,
+          -76.62
+        ],
+        [
+          2.45,
+          -76.54
+        ]
+      ],
+      "title": "Coherencia InSAR γ Compleja (16-Mar vs 06-Nov 2026) Samanga"
     },
     "sotara_sar": {
       "url": "../sotara_sar_overlay.png",
