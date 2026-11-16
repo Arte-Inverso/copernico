@@ -203,6 +203,11 @@ function initSigMap() {
             rasterOverlays.push(lPuraceCoh);
             overlayMaps["📶 " + ov.purace_coh.title] = lPuraceCoh;
         }
+        if (ov.purace_disp) {
+            const lPuraceDisp = L.imageOverlay(ov.purace_disp.url, ov.purace_disp.bounds, { opacity: 0.82 });
+            rasterOverlays.push(lPuraceDisp);
+            overlayMaps["📏 " + ov.purace_disp.title] = lPuraceDisp;
+        }
         if (ov.samanga_rgb) {
             const lRgbSam = L.imageOverlay(ov.samanga_rgb.url, ov.samanga_rgb.bounds, { opacity: 0.85 });
             rasterOverlays.push(lRgbSam);
@@ -217,6 +222,11 @@ function initSigMap() {
             const lSamCoh = L.imageOverlay(ov.samanga_coh.url, ov.samanga_coh.bounds, { opacity: 0.80 });
             rasterOverlays.push(lSamCoh);
             overlayMaps["📶 " + ov.samanga_coh.title] = lSamCoh;
+        }
+        if (ov.samanga_disp) {
+            const lSamDisp = L.imageOverlay(ov.samanga_disp.url, ov.samanga_disp.bounds, { opacity: 0.82 });
+            rasterOverlays.push(lSamDisp);
+            overlayMaps["📏 " + ov.samanga_disp.title] = lSamDisp;
         }
         if (ov.samanga_ndvi) {
             const lNdvi = L.imageOverlay(ov.samanga_ndvi.url, ov.samanga_ndvi.bounds, { opacity: 0.78 });

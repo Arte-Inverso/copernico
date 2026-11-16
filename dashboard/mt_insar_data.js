@@ -88,6 +88,20 @@ var mtInsarData = {
       ],
       "title": "Coherencia InSAR γ Compleja (16-Mar vs 06-Nov 2026) Puracé"
     },
+    "purace_disp": {
+      "url": "purace_disp_los_unwrapped.png",
+      "bounds": [
+        [
+          2.27,
+          -76.44
+        ],
+        [
+          2.36,
+          -76.35
+        ]
+      ],
+      "title": "Desplazamiento LOS Desenrollado [mm] Volcán Puracé"
+    },
     "samanga_ifg": {
       "url": "samanga_ifg_real_overlay.png",
       "bounds": [
@@ -115,6 +129,20 @@ var mtInsarData = {
         ]
       ],
       "title": "Coherencia InSAR γ Compleja (16-Mar vs 06-Nov 2026) Samanga"
+    },
+    "samanga_disp": {
+      "url": "samanga_disp_los_unwrapped.png",
+      "bounds": [
+        [
+          2.38,
+          -76.62
+        ],
+        [
+          2.45,
+          -76.54
+        ]
+      ],
+      "title": "Desplazamiento LOS Desenrollado [mm] Samanga & Popayán"
     },
     "sotara_sar": {
       "url": "../sotara_sar_overlay.png",
