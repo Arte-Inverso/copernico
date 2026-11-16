@@ -33,3 +33,12 @@ Thumbs.db
 .env
 .env.local
 
+# =============================================================================
+# DOCUMENTACIÓN PRIVADA Y MEMORIA LOCAL DEL AGENTE (NO SUBIR A GITHUB)
+# =============================================================================
+local_docs/
+*.private.md
+*.draft.md
+docs/internal/
+data/gnss_igac/
+outputs/
