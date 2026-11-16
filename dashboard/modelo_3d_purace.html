@@ -453,7 +453,7 @@
 
             // Volcanic Conduit to Crater Summit
             const craterPos = latLonTo3D(crater.lat, crater.lon, crater.elevation);
-            const conduitCurve = new THREE.LineCurve3D(chamberPos, craterPos);
+            const conduitCurve = new THREE.LineCurve3(chamberPos, craterPos);
             const conduitGeom = new THREE.TubeGeometry(conduitCurve, 20, 1.2, 8, false);
             const conduitMat = new THREE.MeshBasicMaterial({ color: 0xff6600, transparent: true, opacity: 0.65 });
             conduitLine = new THREE.Mesh(conduitGeom, conduitMat);
