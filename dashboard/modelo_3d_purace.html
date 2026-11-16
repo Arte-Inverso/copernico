@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo 3D Volcán Puracé — Geodesia InSAR, Cámara Magmática & Sismicidad SGC</title>
+    <!-- Three.js + OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0b0e14;
+            --panel-bg: rgba(15, 23, 42, 0.88);
+            --border-color: rgba(255, 255, 255, 0.12);
+            --accent-cyan: #38bdf8;
+            --accent-purple: #c084fc;
+            --accent-red: #ef4444;
+            --accent-gold: #facc15;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #webgl-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Top Header Overlay */
+        .header-bar {
+            position: absolute;
+            top: 16px;
+            left: 20px;
+            z-index: 10;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            max-width: 480px;
+        }
+
+        .header-bar h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+        }
+
+        .header-bar p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* Right Control Panel */
+        .controls-panel {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            z-index: 10;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .panel-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-group label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: #cbd5e1;
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .control-btn:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--accent-cyan);
+            color: #fff;
+        }
+
+        .control-btn.active {
+            background: linear-gradient(135deg, rgba(2, 132, 199, 0.8), rgba(14, 165, 233, 0.8));
+            border-color: #38bdf8;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Floating Geophysical Info Box */
+        .info-card {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            font-size: 0.78rem;
+            line-height: 1.5;
+            max-width: 440px;
+        }
+
+        .stat-badge {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.73rem;
+            margin-right: 4px;
+        }
+
+        .nav-back-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+            background: rgba(15, 23, 42, 0.9);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-back-btn:hover {
+            background: #0284c7;
+            border-color: #38bdf8;
+        }
+
+        #tooltip {
+            position: absolute;
+            display: none;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--accent-cyan);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div id="tooltip"></div>
+
+    <!-- Header Overlay -->
+    <div class="header-bar">
+        <h1><i class="fa-solid fa-volcano" style="color: #ef4444;"></i> Volcán Puracé — Modelo Geofísico 3D</h1>
+        <p>Topografía Digital SRTM (30 m), Deformación InSAR Sentinel-1 (2026), Cámara Magmática de Mogi a 3.87 km e Hipocentros Sísmicos SGC.</p>
+    </div>
+
+    <!-- Controls Panel -->
+    <div class="controls-panel">
+        <div class="panel-title"><i class="fa-solid fa-layer-group"></i> Capas de Superficie</div>
+        <div class="btn-grid">
+            <button class="control-btn active" onclick="switchTexture('optical', this)">🌍 Óptico (10m)</button>
+            <button class="control-btn" onclick="switchTexture('disp', this)">📏 Deformación mm</button>
+            <button class="control-btn" onclick="switchTexture('ifg', this)">💥 Fase D-InSAR</button>
+            <button class="control-btn" onclick="switchTexture('coh', this)">📶 Coherencia γ</button>
+        </div>
+
+        <div class="panel-title" style="margin-top: 6px;"><i class="fa-solid fa-sliders"></i> Visualización Geológica</div>
+        
+        <div class="control-group">
+            <label><span>Opacidad Corteza (Rayos X):</span> <span id="opacity-val">100%</span></label>
+            <input type="range" id="opacity-slider" min="0.15" max="1.0" step="0.05" value="1.0" oninput="setMeshOpacity(this.value)">
+        </div>
+
+        <div class="control-group">
+            <label><span>Exageración Vertical:</span> <span id="exag-val">1.6×</span></label>
+            <input type="range" id="exag-slider" min="0.8" max="2.8" step="0.1" value="1.6" oninput="setExaggeration(this.value)">
+        </div>
+
+        <div class="btn-grid" style="margin-top: 4px;">
+            <button class="control-btn" id="btn-magma" onclick="toggleSubsurface('magma', this)">🌋 Ocultar Magma</button>
+            <button class="control-btn" id="btn-seismic" onclick="toggleSubsurface('seismic', this)">⚡ Ocultar Sismos</button>
+        </div>
+
+        <div class="btn-grid">
+            <button class="control-btn" onclick="resetCamera()">🎯 Reset Cámara</button>
+            <button class="control-btn" id="btn-rotate" onclick="toggleRotation(this)">🔄 Auto-Rotar</button>
+        </div>
+    </div>
+
+    <!-- Floating Info Box -->
+    <div class="info-card">
+        <div style="font-weight: 700; color: #f8fafc; margin-bottom: 6px; display: flex; justify-content: space-between;">
+            <span>Parámetros Físicos Invertidos</span>
+            <span style="color: var(--accent-purple); font-size: 0.72rem;">Mogi (1958) + InSAR SLC</span>
+        </div>
+        <div>• <strong>Cámara Magmática:</strong> 3.87 km prof. (ΔV: +1.21 × 10⁶ m³) bajo Curiquinga.</div>
+        <div>• <strong>Sismicidad SGC:</strong> 10 eventos VT Someros (prof. media: 2.95 km).</div>
+        <div>• <strong>Deformación Asísmica:</strong> <span style="color: #4ade80; font-weight:600;">99.99%</span> (presurización sin ruptura mayor).</div>
+        <div>• <strong>Cota Máxima:</strong> 4,643 m s.n.m. (Borde del cráter activo).</div>
+    </div>
+
+    <a href="index.html" class="nav-back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Volver al Dashboard SIG
+    </a>
+
+    <!-- Canvas Container -->
+    <div id="webgl-canvas"></div>
+
+    <script src="purace_3d_data.js"></script>
+    <script>
+        let scene, camera, renderer, controls;
+        let terrainMesh = null;
+        let magmaSphere = null;
+        let conduitLine = null;
+        let seismicGroup = new THREE.Group();
+        let markersGroup = new THREE.Group();
+        let textures = {};
+        let currentTextureKey = 'optical';
+        let isRotating = false;
+        let currentExaggeration = 1.6;
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const tooltip = document.getElementById('tooltip');
+
+        function init() {
+            const container = document.getElementById('webgl-canvas');
+            
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x080b11);
+            scene.fog = new THREE.FogExp2(0x080b11, 0.0018);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+            camera.position.set(0, 140, 210);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // OrbitControls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 + 0.15; // Allow slight view from below
+            controls.target.set(0, 20, 0);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+            scene.add(ambientLight);
+
+            const sunLight = new THREE.DirectionalLight(0xfffaed, 1.25);
+            sunLight.position.set(120, 200, 100);
+            sunLight.castShadow = true;
+            scene.add(sunLight);
+
+            const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.35);
+            fillLight.position.set(-150, 50, -100);
+            scene.add(fillLight);
+
+            // Load Textures
+            const texLoader = new THREE.TextureLoader();
+            textures['optical'] = texLoader.load('purace_3d_texture_optical.jpg');
+            textures['disp'] = texLoader.load('purace_3d_texture_disp.jpg');
+            textures['ifg'] = texLoader.load('purace_3d_texture_ifg.jpg');
+            textures['coh'] = texLoader.load('purace_3d_texture_coh.jpg');
+
+            // Build Topographic Terrain Mesh
+            buildTerrain();
+
+            // Build Subsurface Magma Chamber & Seismicity
+            buildSubsurface();
+
+            // Build Surface Markers
+            buildMarkers();
+
+            // Event Listeners
+            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('mousemove', onMouseMove);
+
+            animate();
+        }
+
+        function buildTerrain() {
+            if (typeof purace3DData === 'undefined') return;
+
+            const dem = purace3DData.dem;
+            const rows = dem.height;
+            const cols = dem.width;
+            const planeSize = 200; // units in 3D scene
+
+            const geometry = new THREE.PlaneGeometry(planeSize, planeSize, cols - 1, rows - 1);
+            geometry.rotateX(-Math.PI / 2);
+
+            const pos = geometry.attributes.position;
+            const baseElev = dem.elev_min; // ~2633m
+            const elevSpan = dem.elev_max - dem.elev_min; // ~2010m
+
+            for (let i = 0; i < pos.count; i++) {
+                const r = Math.floor(i / cols);
+                const c = i % cols;
+                const h = dem.elevations[r][c];
+                // Scale altitude to 3D scene units (max elevation around 45 units)
+                const zNorm = ((h - baseElev) / 1000.0) * 22.0 * currentExaggeration;
+                pos.setY(i, zNorm);
+            }
+
+            geometry.computeVertexNormals();
+
+            const material = new THREE.MeshStandardMaterial({
+                map: textures['optical'],
+                roughness: 0.8,
+                metalness: 0.1,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 1.0
+            });
+
+            terrainMesh = new THREE.Mesh(geometry, material);
+            terrainMesh.receiveShadow = true;
+            terrainMesh.castShadow = true;
+            scene.add(terrainMesh);
+        }
+
+        function latLonTo3D(lat, lon, elevMeters = 0) {
+            const b = purace3DData.bounds;
+            const planeSize = 200;
+            
+            // X: West (-76.4648) to East (-76.3770)
+            const u = (lon - b.lon_min) / (b.lon_max - b.lon_min);
+            const x = (u - 0.5) * planeSize;
+
+            // Z: North (2.3724) to South (2.2846)
+            const v = (b.lat_max - lat) / (b.lat_max - b.lat_min);
+            const z = (v - 0.5) * planeSize;
+
+            const baseElev = purace3DData.dem.elev_min;
+            const y = ((elevMeters - baseElev) / 1000.0) * 22.0 * currentExaggeration;
+
+            return new THREE.Vector3(x, y, z);
+        }
+
+        function buildSubsurface() {
+            if (typeof purace3DData === 'undefined') return;
+
+            const mogi = purace3DData.magma_chamber;
+            const crater = purace3DData.crater;
+
+            // 1. Magma Chamber (Mogi Sphere at depth = 3.87 km below surface)
+            // Surface at crater is ~4643m, so chamber elevation is 4643 - 3865 = 778m above sea level
+            const chamberPos = latLonTo3D(mogi.lat, mogi.lon, crater.elevation - mogi.depth_m);
+
+            const sphereGeom = new THREE.SphereGeometry(7.5, 32, 32);
+            const sphereMat = new THREE.MeshStandardMaterial({
+                color: 0xef4444,
+                emissive: 0xff1100,
+                emissiveIntensity: 0.8,
+                roughness: 0.3,
+                transparent: true,
+                opacity: 0.95
+            });
+
+            magmaSphere = new THREE.Mesh(sphereGeom, sphereMat);
+            magmaSphere.position.copy(chamberPos);
+            magmaSphere.userData = {
+                title: "🌋 Cámara Magmática (Inversión Mogi 1958)",
+                info: `Profundidad: ${mogi.depth_km} km | ΔV: +${mogi.delta_v_mcm} M m³ | Lat: ${mogi.lat}°N, Lon: ${mogi.lon}°W`
+            };
+            scene.add(magmaSphere);
+
+            // Volcanic Conduit to Crater Summit
+            const craterPos = latLonTo3D(crater.lat, crater.lon, crater.elevation);
+            const conduitCurve = new THREE.LineCurve3D(chamberPos, craterPos);
+            const conduitGeom = new THREE.TubeGeometry(conduitCurve, 20, 1.2, 8, false);
+            const conduitMat = new THREE.MeshBasicMaterial({ color: 0xff6600, transparent: true, opacity: 0.65 });
+            conduitLine = new THREE.Mesh(conduitGeom, conduitMat);
+            scene.add(conduitLine);
+
+            // 2. SGC Seismic Hypocenters
+            scene.add(seismicGroup);
+            purace3DData.seismic_events.forEach(ev => {
+                // Event depth is in km below surface
+                const evPos = latLonTo3D(ev.lat, ev.lon, crater.elevation - (ev.depth_km * 1000.0));
+                
+                // Radius scaled by magnitude
+                const r = Math.max(1.8, ev.mag * 1.3);
+                const sGeom = new THREE.SphereGeometry(r, 16, 16);
+                
+                // Color by depth
+                const depthColor = ev.depth_km < 3.0 ? 0xff3b30 : (ev.depth_km <= 5.0 ? 0xff9500 : 0x007aff);
+                const sMat = new THREE.MeshStandardMaterial({
+                    color: depthColor,
+                    emissive: depthColor,
+                    emissiveIntensity: 0.6,
+                    roughness: 0.4
+                });
+
+                const sMesh = new THREE.Mesh(sGeom, sMat);
+                sMesh.position.copy(evPos);
+                sMesh.userData = {
+                    title: `⚡ Sismo SGC: ${ev.mag.toFixed(1)} ML`,
+                    info: `Profundidad: ${ev.depth_km} km | Foco: ${ev.lugar} | Fecha: ${ev.fecha}`
+                };
+                seismicGroup.add(sMesh);
+            });
+        }
+
+        function buildMarkers() {
+            if (typeof purace3DData === 'undefined') return;
+
+            scene.add(markersGroup);
+
+            // Crater Summit Marker
+            const crater = purace3DData.crater;
+            const cPos = latLonTo3D(crater.lat, crater.lon, crater.elevation + 80);
+            createSurfacePin(cPos, 0xef4444, "Cráter Activo Puracé (4,643 m)");
+
+            // Curiquinga Fumarole Marker
+            const cur = purace3DData.curiquinga;
+            const curPos = latLonTo3D(cur.lat, cur.lon, cur.elevation + 80);
+            createSurfacePin(curPos, 0xfacc15, "Campo Fumarólico Curiquinga (4,380 m)");
+        }
+
+        function createSurfacePin(position, color, label) {
+            const coneGeom = new THREE.ConeGeometry(2.5, 6, 16);
+            coneGeom.rotateX(Math.PI);
+            const coneMat = new THREE.MeshStandardMaterial({ color: color, emissive: color, emissiveIntensity: 0.5 });
+            const pin = new THREE.Mesh(coneGeom, coneMat);
+            pin.position.copy(position);
+            pin.userData = { title: label, info: "Hito geodésico y estructural" };
+            markersGroup.add(pin);
+        }
+
+        function switchTexture(key, btn) {
+            if (!textures[key] || !terrainMesh) return;
+            currentTextureKey = key;
+            terrainMesh.material.map = textures[key];
+            terrainMesh.material.needsUpdate = true;
+
+            document.querySelectorAll('.btn-grid .control-btn').forEach(b => {
+                if (b.textContent.includes('🌍') || b.textContent.includes('📏') || b.textContent.includes('💥') || b.textContent.includes('📶')) {
+                    b.classList.remove('active');
+                }
+            });
+            btn.classList.add('active');
+        }
+
+        function setMeshOpacity(val) {
+            if (!terrainMesh) return;
+            terrainMesh.material.opacity = parseFloat(val);
+            document.getElementById('opacity-val').textContent = Math.round(val * 100) + '%';
+        }
+
+        function setExaggeration(val) {
+            currentExaggeration = parseFloat(val);
+            document.getElementById('exag-val').textContent = currentExaggeration.toFixed(1) + '×';
+            
+            // Rebuild scene elements with new vertical scale
+            if (terrainMesh) scene.remove(terrainMesh);
+            if (magmaSphere) scene.remove(magmaSphere);
+            if (conduitLine) scene.remove(conduitLine);
+            while(seismicGroup.children.length > 0) seismicGroup.remove(seismicGroup.children[0]);
+            while(markersGroup.children.length > 0) markersGroup.remove(markersGroup.children[0]);
+
+            buildTerrain();
+            terrainMesh.material.map = textures[currentTextureKey];
+            buildSubsurface();
+            buildMarkers();
+        }
+
+        function toggleSubsurface(type, btn) {
+            if (type === 'magma') {
+                const vis = !magmaSphere.visible;
+                magmaSphere.visible = vis;
+                if (conduitLine) conduitLine.visible = vis;
+                btn.textContent = vis ? "🌋 Ocultar Magma" : "🌋 Mostrar Magma";
+                btn.classList.toggle('active', !vis);
+            } else if (type === 'seismic') {
+                const vis = !seismicGroup.visible;
+                seismicGroup.visible = vis;
+                btn.textContent = vis ? "⚡ Ocultar Sismos" : "⚡ Mostrar Sismos";
+                btn.classList.toggle('active', !vis);
+            }
+        }
+
+        function toggleRotation(btn) {
+            isRotating = !isRotating;
+            btn.classList.toggle('active', isRotating);
+        }
+
+        function resetCamera() {
+            camera.position.set(0, 140, 210);
+            controls.target.set(0, 20, 0);
+            controls.update();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const targets = [];
+            if (magmaSphere && magmaSphere.visible) targets.push(magmaSphere);
+            if (seismicGroup && seismicGroup.visible) targets.push(...seismicGroup.children);
+            if (markersGroup) targets.push(...markersGroup.children);
+
+            const intersects = raycaster.intersectObjects(targets);
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+                if (hit.userData && hit.userData.title) {
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = (event.clientX + 14) + 'px';
+                    tooltip.style.top = (event.clientY + 14) + 'px';
+                    tooltip.innerHTML = `<strong>${hit.userData.title}</strong><br><span style="color: #cbd5e1;">${hit.userData.info || ''}</span>`;
+                }
+            } else {
+                tooltip.style.display = 'none';
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isRotating) {
+                scene.rotation.y += 0.003;
+            }
+
+            // Pulse effect for magma chamber
+            if (magmaSphere) {
+                const t = Date.now() * 0.003;
+                const scale = 1.0 + Math.sin(t) * 0.06;
+                magmaSphere.scale.set(scale, scale, scale);
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
