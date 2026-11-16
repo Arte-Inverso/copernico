@@ -227,58 +227,98 @@
                 </div>
             </section>
 
-            <!-- Graphify Section -->
+                        <!-- Graphify Section: Arquitectura Viva de Desarrollo -->
             <section id="graphify" class="theory-section">
                 <header>
-                    <h1>Graphify: Arquitectura Viva del Proyecto</h1>
-                    <p>Mapa integral de conexiones entre sensores Copernicus, entorno Docker, scripts locales, biblioteca científica y territorio.</p>
+                    <h1><i class="fa-solid fa-diagram-project" style="color: var(--accent-cyan);"></i> Graphify: Arquitectura Viva &amp; Hoja de Ruta de Desarrollo</h1>
+                    <p style="color: var(--text-secondary);">Mapeo integral de componentes activos, flujos geofísicos, calibraciones de terreno y módulos en desarrollo continuo.</p>
                 </header>
 
-                <div class="concept-card" style="border-left: 3px solid var(--accent-cyan);">
-                    <h3><i class="fa-solid fa-sitemap"></i> Arquitectura End-to-End (6 Capas Conectadas — Actualizado Nov 2026)</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 15px;">
-                        <div class="card" style="padding: 12px;">
-                            <strong style="color: var(--accent-cyan);">1. Sensores &amp; APIs</strong>
-                            <p style="font-size: 0.8rem; margin-top: 6px;">• Sentinel-1A/1C IW SLC<br>• Sentinel-2 L2A (10m + Red Edge)<br>• ECMWF ERA5 &amp; SGC OVSPop</p>
+                <!-- Estado del Entorno de Desarrollo -->
+                <div style="background: rgba(0, 210, 255, 0.08); border-left: 4px solid var(--accent-cyan); padding: 18px; border-radius: 8px; margin-bottom: 22px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <strong style="color: var(--accent-cyan); font-size: 1.1rem;"><i class="fa-solid fa-code-branch"></i> Entorno de Desarrollo Activo (Noviembre 2026)</strong>
+                            <p style="margin: 6px 0 0 0; font-size: 0.88rem; color: #ddd;">Stack científico 100% reproducible: Docker + Python 3.10 + GDAL + InSAR Complejo + Inversión Geofísica.</p>
                         </div>
-                        <div class="card" style="padding: 12px;">
-                            <strong style="color: var(--accent-gold);">2. Ingesta Python</strong>
-                            <p style="font-size: 0.8rem; margin-top: 6px;">• <code>download_s1_latest.py</code><br>• <code>batch_download_sar.py</code><br>• <code>download_s2_latest.py</code><br>• <code>sgc_live_data.py</code></p>
+                        <span style="background: #10b981; color: #0b0e14; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">● DESARROLLO SINCRONIZADO</span>
+                    </div>
+                </div>
+
+                <!-- 6 Capas de Arquitectura End-to-End -->
+                <div class="concept-card" style="border-left: 3px solid var(--accent-cyan); margin-bottom: 22px;">
+                    <h3><i class="fa-solid fa-sitemap"></i> Arquitectura End-to-End del Sistema (6 Capas Conectadas)</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: 15px;">
+                        <div class="card" style="padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+                            <strong style="color: var(--accent-cyan);"><i class="fa-solid fa-satellite"></i> 1. Sensores &amp; SLCs</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px; line-height: 1.5; color: #ccc;">• Sentinel-1A/1C/1D IW SLC (TIFFs 1.5 GB)<br>• Subswaths IW1 (Puracé) e IW2 (Samanga/POVA)<br>• Sentinel-2 L2A (10m + Red Edge NDVI)</p>
                         </div>
-                        <div class="card" style="padding: 12px;">
-                            <strong style="color: #38bdf8;">3. Docker &amp; Motores</strong>
-                            <p style="font-size: 0.8rem; margin-top: 6px;">• Contenedor <code>copernico-dev</code> (Bookworm + GDAL)<br>• Nginx Alpine (Puerto 8085)<br>• SNAP GPT + OpenCV</p>
+                        <div class="card" style="padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+                            <strong style="color: var(--accent-gold);"><i class="fa-solid fa-gears"></i> 2. Motores InSAR &amp; Fase</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px; line-height: 1.5; color: #ccc;">• Interferograma complejo: s₁·conj(s₂)<br>• Coherencia estadística γ con multilook 7x7<br>• Unwrapping 2D Herráez et al. (2002)</p>
                         </div>
-                        <div class="card" style="padding: 12px;">
-                            <strong style="color: #a855f7;">4. Biblioteca Científica</strong>
-                            <p style="font-size: 0.8rem; margin-top: 6px;">• Serie Procesamiento Multitemporal (PS+DS InSAR, InSAR Multitemporal, BIOMASS)<br>• Serie Geoscience (MintPy, ISCE2, GPR, ERA5)</p>
+                        <div class="card" style="padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+                            <strong style="color: #ff4b2b;"><i class="fa-solid fa-volcano"></i> 3. Inversión Geofísica</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px; line-height: 1.5; color: #ccc;">• Fuente Mogi (1958) no lineal<br>• Cámara Puracé estimada: 1.57 km depth<br>• Acoplamiento sísmico SGC (99.99% asísmico)</p>
                         </div>
-                        <div class="card" style="padding: 12px;">
-                            <strong style="color: #22c55e;">5. Productos Ráster &amp; GIS</strong>
-                            <p style="font-size: 0.8rem; margin-top: 6px;">• <code>Mapa_NDVI_Samanga_Baja_AltaRes_2026.png</code><br>• <code>purace_ifg_v3_final.png</code><br>• <code>samanga_asi_ps_sbas.png</code></p>
+                        <div class="card" style="padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+                            <strong style="color: #10b981;"><i class="fa-solid fa-satellite-dish"></i> 4. Calibración &amp; Geodesia</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px; line-height: 1.5; color: #ccc;">• Colocalización satelital POVA a 0.01 km (10 m)<br>• Fórmula de proyección 3D→LOS Hanssen (2001)<br>• Test de control de 6 días: -0.02 mm</p>
                         </div>
-                        <div class="card" style="padding: 12px;">
-                            <strong style="color: var(--accent-red);">6. Territorio &amp; Impacto</strong>
-                            <p style="font-size: 0.8rem; margin-top: 6px;">• Caficultura Samanga Baja<br>• Alianza CTeI (UNIMAYOR + TECNICAFÉ)<br>• Red OVSPop (SGC)</p>
+                        <div class="card" style="padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+                            <strong style="color: #38bdf8;"><i class="fa-solid fa-cube"></i> 5. Visores 3D &amp; Storytelling</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px; line-height: 1.5; color: #ccc;">• Hub 3D WebGL Multi-territorio (Puracé/Sotará/Samanga)<br>• Tiles DEM Mapzen Terrarium SRTM<br>• Storytelling narrativo editorial</p>
+                        </div>
+                        <div class="card" style="padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+                            <strong style="color: #a855f7;"><i class="fa-solid fa-mountain-sun"></i> 6. Territorio &amp; Alerta</strong>
+                            <p style="font-size: 0.8rem; margin-top: 6px; line-height: 1.5; color: #ccc;">• Cuencas cafeteras Vereda Samanga Baja<br>• Vigilancia de fallas y laderas críticas<br>• Ingesta y clasificación sismicidad OVSPop/SGC</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="concept-card">
-                    <h3><i class="fa-solid fa-server"></i> Novedad de Despliegue: Dockerización Ligera &amp; Estable</h3>
-                    <p style="font-size: 0.9rem;">
-                        • <strong>Entorno Científico Contenerizado:</strong> Servicio <code>copernico-dev</code> con Python 3.10 Bookworm, GDAL y dependencias nativas (<code>rasterio</code>, <code>geopandas</code>, <code>rioxarray</code>, <code>asf-search</code>, <code>cdsapi</code>), reduciendo el consumo a &lt; 1 GB RAM.<br>
-                        • <strong>Dashboard en Vivo (Puerto 8085):</strong> Servicio Nginx independiente con bind mount en caliente hacia <code>dashboard/</code> y <code>outputs/dashboard/</code>.<br>
-                        • <strong>Biblioteca Técnica Integrada:</strong> Disponibilidad local de los 8 manuales técnicos de <code>C:\Copernico\Documentos</code> para soporte metodológico continuo.
-                    </p>
+                <!-- Hoja de Ruta Activa para Desarrollo -->
+                <div class="concept-card" style="margin-bottom: 22px;">
+                    <h3><i class="fa-solid fa-list-check"></i> Hoja de Ruta de Desarrollo (Recordatorio Técnico para Próximas Sesiones)</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.2); padding: 14px; border-radius: 8px;">
+                            <strong style="color: #10b981;"><i class="fa-solid fa-check"></i> FASE 1: NÚCLEO FÍSICO VALIDADO</strong>
+                            <ul style="font-size: 0.83rem; margin-top: 8px; padding-left: 20px; line-height: 1.6; color: #ddd;">
+                                <li>Interferometría de fase compleja real operativa.</li>
+                                <li>Unwrapping 2D Herráez y métrica de desplazamiento milimétrico d_LOS.</li>
+                                <li>Test de 6 días (-0.02 mm) que certifica estabilidad numérica.</li>
+                                <li>Colocalización geodésica del píxel InSAR sobre POVA (10 m).</li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(0, 210, 255, 0.06); border: 1px solid rgba(0, 210, 255, 0.2); padding: 14px; border-radius: 8px;">
+                            <strong style="color: var(--accent-cyan);"><i class="fa-solid fa-spinner fa-spin"></i> FASE 2: EN DESARROLLO INMEDIATO</strong>
+                            <ul style="font-size: 0.83rem; margin-top: 8px; padding-left: 20px; line-height: 1.6; color: #ddd;">
+                                <li>Descarga y ordenamiento del stack multitemporal (20+ SLCs Sentinel-1).</li>
+                                <li>Integración local del módulo de retardo troposférico ERA5 / PyAPS3.</li>
+                                <li>Automatización de la ingesta sísmica SGC vía WebService / FDSN.</li>
+                                <li>Calibración continua con datos de estaciones GNSS activas.</li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(255, 204, 0, 0.06); border: 1px solid rgba(255, 204, 0, 0.2); padding: 14px; border-radius: 8px;">
+                            <strong style="color: var(--accent-gold);"><i class="fa-solid fa-forward"></i> FASE 3: ESCALABILIDAD OPERATIVA</strong>
+                            <ul style="font-size: 0.83rem; margin-top: 8px; padding-left: 20px; line-height: 1.6; color: #ddd;">
+                                <li>Descomposición de deformación vertical (Up) y horizontal (East-West) combinando órbitas Ascendente y Descendente.</li>
+                                <li>Integración de reflectores persistentes (PS) en cascos urbanos y dispersores distribuidos (DS) en cafetales.</li>
+                                <li>Sistema de alertas comunitarias tempranas para Samanga Baja.</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Registro de Scripts de Desarrollo -->
                 <div class="concept-card">
-                    <h3><i class="fa-solid fa-bug-slash"></i> Hallazgos Técnicos Clave Documentados en tus Escenas</h3>
-                    <p style="font-size: 0.9rem;">
-                        1. <strong>Serie Temporal de 3 Épocas Sentinel-1 (Marzo – Noviembre 2026):</strong> Integración de <code>S1A (10-Mar-2026)</code>, <code>S1C (16-Mar-2026)</code> y la nueva escena <code>S1C (06-Nov-2026)</code> en Track 142 Descendente, permitiendo evaluar la estabilidad multimes (<code>ASI</code>) tanto en <strong>Samanga Baja (IW2 VV)</strong> como en el <strong>Volcán Puracé (IW1 VV)</strong>.<br>
-                        2. <strong>Mosaico Óptico Sentinel-2 L2A de 10 m (Actualizado al 08-Nov-2026):</strong> Combinación de las bandas <code>B02, B03, B04, B08</code> y máscara de nubes <code>SCL</code> para cartografiar el vigor cafetero de Samanga Baja (NDVI medio <code>0.817</code>) y el cráter del Volcán Puracé a 10 m de resolución.<br>
-                        3. <strong>Corrección de Byte Order ENVI:</strong> Lectura nativa en formato <em>Big-Endian</em> (<code>&gt;f4</code>) de las matrices de ESA SNAP sin pérdida de precisión flotante.
+                    <h3><i class="fa-solid fa-terminal"></i> Scripts Clave del Repositorio para Desarrollo</h3>
+                    <p style="font-size: 0.85rem; color: #ccc;">
+                        • <code>scripts/insar_mogi_seismic_inversion_v2.py</code>: Motor principal D-InSAR real + Mogi + colocalización POVA (10 m).<br>
+                        • <code>scripts/compute_pair_10mar_16mar.py</code>: Benchmark de control de 6 días (-0.02 mm).<br>
+                        • <code>scripts/validate_gnss_igac_v4_honesto.py</code>: Módulo de validación transparente sin datos sintéticos.<br>
+                        • <code>scripts/generate_all_3d_territories.py</code>: Generador de mallas DEM Terrarium y escenas 3D WebGL.<br>
+                        • <code>scripts/generate_pedagogical_dashboard.py</code>: Generador del storytelling narrativo visual.<br>
+                        • <code>sgc_live_data.py</code>: Ingesta, clasificación y cálculo de energía sísmica del OVSPop/SGC.
                     </p>
                 </div>
             </section>
