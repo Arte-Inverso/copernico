@@ -238,6 +238,44 @@ function initSigMap() {
             rasterOverlays.push(lAsi);
             overlayMaps["📡 " + ov.samanga_asi.title] = lAsi;
         }
+        
+        // Capas Co-Sísmicas Reales Sentinel-1 (Chocó M7.4, Venezuela M5.0, Chaparral M5.4)
+        if (ov.purace_ifg_choco) {
+            const lChoco = L.imageOverlay(ov.purace_ifg_choco.url, ov.purace_ifg_choco.bounds, { opacity: 0.80 });
+            rasterOverlays.push(lChoco);
+            overlayMaps["⚡ " + ov.purace_ifg_choco.title] = lChoco;
+        }
+        if (ov.purace_coh_choco) {
+            const lChocoCoh = L.imageOverlay(ov.purace_coh_choco.url, ov.purace_coh.bounds, { opacity: 0.80 });
+            rasterOverlays.push(lChocoCoh);
+            overlayMaps["📶 " + ov.purace_coh_choco.title] = lChocoCoh;
+        }
+        if (ov.purace_ifg_chaparral) {
+            const lChap = L.imageOverlay(ov.purace_ifg_chaparral.url, ov.purace_ifg_chaparral.bounds, { opacity: 0.80 });
+            rasterOverlays.push(lChap);
+            overlayMaps["⚡ " + ov.purace_ifg_chaparral.title] = lChap;
+        }
+        if (ov.purace_coh_chaparral) {
+            const lChapCoh = L.imageOverlay(ov.purace_coh_chaparral.url, ov.purace_coh_chaparral.bounds, { opacity: 0.80 });
+            rasterOverlays.push(lChapCoh);
+            overlayMaps["📶 " + ov.purace_coh_chaparral.title] = lChapCoh;
+        }
+        if (ov.purace_ifg_venezuela) {
+            const lVen = L.imageOverlay(ov.purace_ifg_venezuela.url, ov.purace_ifg_venezuela.bounds, { opacity: 0.80 });
+            rasterOverlays.push(lVen);
+            overlayMaps["⚡ " + ov.purace_ifg_venezuela.title] = lVen;
+        }
+        if (ov.samanga_ifg_choco) {
+            const lSamChoco = L.imageOverlay(ov.samanga_ifg_choco.url, ov.samanga_ifg_choco.bounds, { opacity: 0.80 });
+            rasterOverlays.push(lSamChoco);
+            overlayMaps["⚡ " + ov.samanga_ifg_choco.title] = lSamChoco;
+        }
+        if (ov.samanga_ifg_chaparral) {
+            const lSamChap = L.imageOverlay(ov.samanga_ifg_chaparral.url, ov.samanga_ifg_chaparral.bounds, { opacity: 0.80 });
+            rasterOverlays.push(lSamChap);
+            overlayMaps["⚡ " + ov.samanga_ifg_chaparral.title] = lSamChap;
+        }
+
         if (ov.sotara_sar) {
             const lSotara = L.imageOverlay(ov.sotara_sar.url, ov.sotara_sar.bounds, { opacity: 0.78 });
             rasterOverlays.push(lSotara);

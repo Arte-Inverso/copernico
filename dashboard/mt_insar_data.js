@@ -4,6 +4,126 @@ var mtInsarData = {
   "ascending_aux": "Sentinel-1C (09-Mar-2026) | Track 48 ASC + Sentinel-2 L2A (08-Nov-2026)",
   "wavelength_mm": 55.47,
   "overlays": {
+    "samanga_ifg_chaparral": {
+  "url": "samanga_ifg_rioblanco_chaparral_m54_overlay.png",
+      "bounds": [
+            [
+                  2.38,
+                  -76.62
+            ],
+            [
+                  2.45,
+                  -76.54
+            ]
+      ],
+      "title": "Co-s\u00edsmico Tolima/Chaparral M5.4 (12d) Samanga / Popay\u00e1n"
+
+    },
+    "samanga_ifg_choco": {
+  "url": "samanga_ifg_choco_m74_overlay.png",
+      "bounds": [
+            [
+                  2.38,
+                  -76.62
+            ],
+            [
+                  2.45,
+                  -76.54
+            ]
+      ],
+      "title": "Co-s\u00edsmico Choc\u00f3 M7.4 (6d) Samanga Baja / Popay\u00e1n"
+
+    },
+    "purace_coh_chaparral": {
+  "url": "purace_coh_rioblanco_chaparral_m54_overlay.png",
+      "bounds": [
+            [
+                  2.27,
+                  -76.44
+            ],
+            [
+                  2.36,
+                  -76.35
+            ]
+      ],
+      "title": "Coherencia \u03b3 Tolima/Chaparral M5.4 (31-Oct vs 12-Nov, 12d) Purac\u00e9"
+
+    },
+    "purace_ifg_chaparral": {
+  "url": "purace_ifg_rioblanco_chaparral_m54_overlay.png",
+      "bounds": [
+            [
+                  2.27,
+                  -76.44
+            ],
+            [
+                  2.36,
+                  -76.35
+            ]
+      ],
+      "title": "Co-s\u00edsmico Tolima/Chaparral M5.4 (31-Oct vs 12-Nov, 12d) Purac\u00e9"
+
+    },
+    "purace_coh_venezuela": {
+  "url": "purace_coh_venezuela_m50_overlay.png",
+      "bounds": [
+            [
+                  2.27,
+                  -76.44
+            ],
+            [
+                  2.36,
+                  -76.35
+            ]
+      ],
+      "title": "Coherencia \u03b3 Venezuela M5.0 (01-Oct vs 07-Oct, 6d) Purac\u00e9"
+
+    },
+    "purace_ifg_venezuela": {
+  "url": "purace_ifg_venezuela_m50_overlay.png",
+      "bounds": [
+            [
+                  2.27,
+                  -76.44
+            ],
+            [
+                  2.36,
+                  -76.35
+            ]
+      ],
+      "title": "Co-s\u00edsmico Venezuela M5.0 (01-Oct vs 07-Oct, 6d) Franjas Purac\u00e9"
+
+    },
+    "purace_coh_choco": {
+  "url": "purace_coh_choco_m74_overlay.png",
+      "bounds": [
+            [
+                  2.27,
+                  -76.44
+            ],
+            [
+                  2.36,
+                  -76.35
+            ]
+      ],
+      "title": "Coherencia \u03b3 Choc\u00f3 M7.4 (08-Ago vs 14-Ago, 6d) Purac\u00e9"
+
+    },
+    "purace_ifg_choco": {
+  "url": "purace_ifg_choco_m74_overlay.png",
+      "bounds": [
+            [
+                  2.27,
+                  -76.44
+            ],
+            [
+                  2.36,
+                  -76.35
+            ]
+      ],
+      "title": "Co-s\u00edsmico Choc\u00f3 M7.4 (08-Ago vs 14-Ago, 6d) Franjas Purac\u00e9"
+
+    },
     "samanga_rgb": {
       "url": "../samanga_rgb_2026.png",
       "bounds": [
