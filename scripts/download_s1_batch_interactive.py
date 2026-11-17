@@ -15,10 +15,15 @@ os.makedirs(DOWNLOAD_BASE, exist_ok=True)
 POINT_POPAYAN = "POINT(-76.57 2.40)"
 
 def get_asf_session():
-    """Autentica sesión contra NASA Earthdata usando credenciales configuradas."""
+    """Autentica sesión contra NASA Earthdata usando netrc o variables de entorno."""
     session = asf.ASFSession()
     try:
-        session.auth_with_creds('arteinverso', 'LS?wKZ#KkE^R8Zx')
+        user = os.environ.get("EARTHDATA_USER")
+        pwd = os.environ.get("EARTHDATA_PASSWORD")
+        if user and pwd:
+            session.auth_with_creds(user, pwd)
+        else:
+            session.auth_with_netrc()
         return session
     except Exception as e:
         print("Error en autenticación:", e)

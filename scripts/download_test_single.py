@@ -18,8 +18,13 @@ def main():
     
     # 1. Autenticar
     session = asf.ASFSession()
-    session.auth_with_creds('arteinverso', 'LS?wKZ#KkE^R8Zx')
-    print("✓ Autenticado en NASA Earthdata como 'arteinverso'")
+    user = os.environ.get("EARTHDATA_USER")
+    pwd = os.environ.get("EARTHDATA_PASSWORD")
+    if user and pwd:
+        session.auth_with_creds(user, pwd)
+    else:
+        session.auth_with_netrc()
+    print("✓ Autenticado en NASA Earthdata (netrc / env)")
     
     # 2. Buscar la escena de prueba más reciente disponible de 2026 sobre Popayán (Track 142)
     print("🔍 Seleccionando escena objetivo...")

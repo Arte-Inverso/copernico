@@ -55,8 +55,13 @@ def main():
     print("=" * 75)
 
     session = asf.ASFSession()
-    session.auth_with_creds('arteinverso', 'LS?wKZ#KkE^R8Zx')
-    print("✓ Autenticado exitosamente en NASA Earthdata como 'arteinverso'")
+    user = os.environ.get("EARTHDATA_USER")
+    pwd = os.environ.get("EARTHDATA_PASSWORD")
+    if user and pwd:
+        session.auth_with_creds(user, pwd)
+    else:
+        session.auth_with_netrc()
+    print("✓ Autenticado exitosamente en NASA Earthdata (netrc / env)")
 
     for idx, item in enumerate(TARGET_SCENES):
         fname = item["filename"]
